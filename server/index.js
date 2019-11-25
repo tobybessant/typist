@@ -1,4 +1,4 @@
-const dotenv = require("dotenv");
+const dotenv = require("dotenv")
 
-/* environment setup */
-dotenv.config();
+/* setup */
+dotenv.config()
