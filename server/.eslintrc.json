@@ -19,5 +19,6 @@
         "indent": ["error", "tab"],
         "space-before-function-paren": 0,
         "no-tabs": 0
-    }
+    },
+    "ignorePatterns": "test/"
 }
