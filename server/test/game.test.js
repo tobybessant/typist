@@ -44,8 +44,8 @@ suite("GAMES API ROUTES", () => {
 					assert.fail("Unexpected error")
 					return
 				}
-				console.log(res)
 				assert(res.status === 400, "Status code is 400")
+				assert.property(res.body, "errors", "No errors present in response body")
 			})
 	})
 })
