@@ -2,20 +2,25 @@ const dotenv = require("dotenv")
 const express = require("express")
 const bodyParser = require("body-parser")
 const morgan = require("morgan")
+const apiRouter = require("./api/routes")
+const database = require("./database")
 
 // environment config
 dotenv.config()
-const PORT = process.env.PORT
+const PORT = process.env.PORT || 3000
 
 // app config
 const app = express()
 app.use(bodyParser.json())
-app.use(morgan("dev"))
+if (process.env.NODE_ENV === "development") {
+	app.use(morgan("dev"))
+}
 
-// app routes
-app.get("/", (req, res) => {
-	res.json({ message: "Index endpoint reached" })
-})
+// fetch environment-specific database
+database.connect(process.env["DB_STRING_" + process.env.NODE_ENV])
+
+// api routes
+app.use("/api", apiRouter)
 
 // app start
 app.listen(PORT, () => {
