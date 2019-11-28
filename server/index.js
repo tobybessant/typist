@@ -16,7 +16,7 @@ if (process.env.NODE_ENV === "development") {
 	app.use(morgan("dev"))
 }
 
-// fetch environment-specific database
+// fetch environment-specific database from .env
 database.connect(process.env["DB_STRING_" + process.env.NODE_ENV])
 
 // api routes
