@@ -22,7 +22,7 @@ database.connect(process.env["DB_STRING_" + process.env.NODE_ENV])
 // api routes
 app.use("/api", apiRouter)
 
-// app start
+// start server
 app.listen(PORT, () => {
 	console.log(`Server listening on ${PORT}. . .`)
 })
