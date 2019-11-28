@@ -11,13 +11,13 @@ chai.use(chaiHttp)
 suite("GAMES API ROUTES", () => {
 	test("'/api/game/new' route should return a new game", () => {
 		const game = require("../api/models/game")
-		const testGame = game({
+		const validGame = game({
 			name: "Test game!"
 		})
 
 		chai.request(app)
 			.post("/api/game/new")
-			.send(testGame)
+			.send(validGame)
 			.end((err, res) => {
 				if (err) {
 					assert.fail("Unexpected error")
@@ -26,7 +26,26 @@ suite("GAMES API ROUTES", () => {
 				assert(res.status === 200, "Status code not 200")
 				assert.isObject(res.body, "Response body is not JSON")
 				assert.isDefined(String, res.body.savedGame._id, "Game not created")
-				assert.equal(testGame.name, res.body.savedGame.name, "Game name does not match payload")
+				assert.equal(validGame.name, res.body.savedGame.name, "Game name does not match payload")
+			})
+	}),
+
+	test("'/api/game/new' route should not add erronous games", () => {
+		const game = require("../api/models/game")
+		const invalidGame = game({
+			invalidName: "Invalid test game!"
+		})
+
+		chai.request(app)
+			.post("/api/game/new")
+			.send(invalidGame)
+			.end((err, res) => {
+				if (err) {
+					assert.fail("Unexpected error")
+					return
+				}
+				console.log(res)
+				assert(res.status === 400, "Status code is 400")
 			})
 	})
 })
