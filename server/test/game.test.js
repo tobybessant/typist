@@ -10,8 +10,14 @@ chai.use(chaiHttp)
 // api routes test
 suite("GAMES API ROUTES", () => {
 	test("'/api/game/new' route should return a new game", () => {
+		const game = require("../api/models/game")
+		const testGame = game({
+			name: "Test game!"
+		})
+
 		chai.request(app)
-			.get("/api/game/new")
+			.post("/api/game/new")
+			.send(testGame)
 			.end((err, res) => {
 				if (err) {
 					assert.fail("Unexpected error")
@@ -20,6 +26,7 @@ suite("GAMES API ROUTES", () => {
 				assert(res.status === 200, "Status code not 200")
 				assert.isObject(res.body, "Response body is not JSON")
 				assert.isDefined(String, res.body.savedGame._id, "Game not created")
+				assert.equal(testGame.name, res.body.savedGame.name, "Game name does not match payload")
 			})
 	})
 })
