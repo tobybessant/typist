@@ -1,4 +1,3 @@
-const dotenv = require("dotenv")
 const express = require("express")
 const bodyParser = require("body-parser")
 const morgan = require("morgan")
@@ -6,7 +5,6 @@ const apiRouter = require("./api/routes")
 const database = require("./database")
 
 // environment config
-dotenv.config()
 const PORT = process.env.PORT || 3000
 
 // app config
