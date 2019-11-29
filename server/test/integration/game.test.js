@@ -2,15 +2,15 @@
 const chai = require("chai")
 const assert = chai.assert
 const chaiHttp = require("chai-http")
-const app = require("../index")
+const app = require("../../index")
 
 // chai setup
 chai.use(chaiHttp)
 
 // api routes test
-suite("GAMES API ROUTES", () => {
+suite("Integration Tests:: /game", () => {
 	test("'/api/game/new' route should return a new game", () => {
-		const game = require("../api/models/game")
+		const game = require("../../api/models/game")
 		const validGame = game({
 			name: "Test game!"
 		})
@@ -31,7 +31,7 @@ suite("GAMES API ROUTES", () => {
 	}),
 
 	test("'/api/game/new' route should not add erronous games", () => {
-		const game = require("../api/models/game")
+		const game = require("../../api/models/game")
 		const invalidGame = game({
 			invalidName: "Invalid test game!"
 		})
