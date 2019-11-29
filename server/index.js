@@ -1,3 +1,4 @@
+const dotenv = require("dotenv")
 const express = require("express")
 const bodyParser = require("body-parser")
 const morgan = require("morgan")
@@ -5,7 +6,9 @@ const apiRouter = require("./api/routes")
 const database = require("./database")
 
 // environment config
+dotenv.config()
 const PORT = process.env.PORT || 3000
+const DB_STRING = process.env["DB_STRING_" + process.env.NODE_ENV]
 
 // app config
 const app = express()
@@ -15,7 +18,7 @@ if (process.env.NODE_ENV === "development") {
 }
 
 // fetch environment-specific database from .env
-database.connect(process.env["DB_STRING_" + process.env.NODE_ENV])
+database.connect(DB_STRING)
 
 // api routes
 app.use("/api", apiRouter)
