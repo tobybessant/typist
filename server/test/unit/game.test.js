@@ -1,4 +1,7 @@
-// dependancies
+const MockRequest = require("../mocks/http/mockRequest")
+const MockResponse = require("../mocks/http/mockResponse")
+const MockGameModel = require("../mocks/models/game")
+
 const chai = require("chai")
 const assert = chai.assert
 
@@ -9,19 +12,13 @@ let gameController, req, res
 suite("Unit Tests :: GameController :: Valid Data", () => {
 
 	setup(() => {
-		// setup mock model to remove db connection requirement
-		class mockGameModel {
-			save() {
-				return
-			}
-		}
-		gameController = new GameController(mockGameModel)
+		// setup mock model with a valid name property
+		let name = "Name!"
+		gameController = new GameController(MockGameModel)
 
 		// setup mock request and response
-		req = {
-			body: { name: "Valid name" }
-		}
-		res = new Object()
+		req = new MockRequest({ name })
+		res = new MockResponse()
 	})
 
 	teardown(() => {
@@ -31,37 +28,30 @@ suite("Unit Tests :: GameController :: Valid Data", () => {
 	})
 
 	test("Valid models return status code 200", async () => {
-		// test create game 
-		res = await gameController.createGame(req ,res)
-
+		// test create game
+		await gameController.createGame(req, res)
+		
 		// check status code of response
-		assert.propertyVal(res, "status", 200, "Status code is not 200")
+		assert.propertyVal(res, "statusCode", 200, "Status code is not 200")
 	})
 
 	test("Valid models return a success message", async () => {
-		// test create game 
-		res = await gameController.createGame(req ,res)
+		// test create game
+		await gameController.createGame(req, res)
 
 		// check message of response
-		assert.property(res, "message", "Response is missing a success message")
+		assert.property(res.body, "message", "Response is missing a success message")
 	})
 })
 
 suite("Unit Tests :: GameController :: Invalid Data", () => {
 	setup(() => {
-		// setup mock model to remove db connection requirement
-		class mockGameModel {
-			save() {
-				return
-			}
-		}
-		gameController = new GameController(mockGameModel)
+		// setup mock model with no name property
+		gameController = new GameController(MockGameModel)
 
 		// setup mock request and response
-		req = {
-			body: { }
-		}
-		res = new Object()
+		req = new MockRequest()
+		res = new MockResponse()
 	})
 
 	teardown(() => {
@@ -72,17 +62,17 @@ suite("Unit Tests :: GameController :: Invalid Data", () => {
 
 	test("Models without a name return status code 400", async () => {
 		// test create game 
-		res = await gameController.createGame(req ,res)
+		await gameController.createGame(req ,res)
 
 		// check status code of response
-		assert.propertyVal(res, "status", 400, "Status code is not 400")
+		assert.propertyVal(res, "statusCode", 400, "Status code is not 400")
 	})
 
 	test("Models without a name return an error message", async () => {
 		// test create game 
-		res = await gameController.createGame(req ,res)
+		await gameController.createGame(req ,res)
 
 		// check error of response
-		assert.property(res, "error", "Error message is not present")
+		assert.property(res.body, "error", "Error message is not present")
 	})
 })
