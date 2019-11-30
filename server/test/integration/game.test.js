@@ -8,37 +8,43 @@ const app = require("../../index")
 chai.use(chaiHttp)
 
 // api routes test
-describe("Integration Tests:: game :: '/api/game/new'", () => {
+describe("-= Running Integration Tests =-\n", () => {
+	describe("Route '/api/game/new':", () => {
+		describe("Valid Data", () => {
+			it("Should return a new game", async () => {
+				const game = require("../../api/models/game")
+				const validGame = game({
+					name: "Test game!"
+				})
 
-	it("Should return a new game", async () => {
-		const game = require("../../api/models/game")
-		const validGame = game({
-			name: "Test game!"
-		})
-		
-		let res = await chai.request(app)
-								.post("/api/game/new")
-								.set("Content-Type", "application/json")
-								.send(validGame)
-		
-		expect(res.status).to.equal(200, "Status not 200")
-		expect(res.body).to.be.instanceOf(Object, "Response data is not JSON")
-		expect(res.body).to.have.property("gameName")
-		expect(res.body.gameName).to.equal(validGame.name, "Returned game data does not match sent payload")
-	})
+				let res = await chai.request(app)
+					.post("/api/game/new")
+					.set("Content-Type", "application/json")
+					.send(validGame)
 
-	it("Should not add erronous games", async () => {
-		const game = require("../../api/models/game")
-		const invalidGame = game({
-			invalidName: "Invalid test game!"
+				expect(res.status).to.equal(200, "Status not 200")
+				expect(res.body).to.be.instanceOf(Object, "Response data is not JSON")
+				expect(res.body).to.have.property("gameName")
+				expect(res.body.gameName).to.equal(validGame.name, "Returned game data does not match sent payload")
+			})
 		})
-		
-		let res = await chai.request(app)
-							.post("/api/game/new")
-				  			.set("Content-Type", "application/json")
-							.send(invalidGame)
-							  
-		expect(res.status).to.equal(400, "Status not 400")
-		expect(res.body).to.have.property("error", "Malformed request")
+
+		describe("Invalid Data", () => {
+
+			it("Should not add erronous games", async () => {
+				const game = require("../../api/models/game")
+				const invalidGame = game({
+					invalidName: "Invalid test game!"
+				})
+
+				let res = await chai.request(app)
+					.post("/api/game/new")
+					.set("Content-Type", "application/json")
+					.send(invalidGame)
+
+				expect(res.status).to.equal(400, "Status not 400")
+				expect(res.body).to.have.property("error", "Malformed request")
+			})
+		})
 	})
 })

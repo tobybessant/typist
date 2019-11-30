@@ -10,7 +10,6 @@ module.exports = {
 	database: null,
 	async connect (uri) {
 		await mongoose.connect(uri, options).then(() => {
-			console.log("Connected to database")
 			this.database = mongoose.connection
 		}).catch((err) => {
 			console.error(err)

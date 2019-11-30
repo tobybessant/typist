@@ -25,7 +25,9 @@ app.use("/api", apiRouter)
 
 // start server
 app.listen(PORT, () => {
-	console.log(`Server listening on ${PORT}. . .`)
+	if (process.env.NODE_ENV !== "test") {
+		console.log(`Server listening on ${PORT}. . .`)
+	}
 })
 
 module.exports = app
