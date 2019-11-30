@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon --inspect index.js",
-    "test": "NODE_ENV=test mocha --exit"
+    "test:unit": "NODE_ENV=test mocha -ui tdd test/unit/**/*.js --exit",
+    "test:integration": "NODE_ENV=test mocha -ui bdd test/integration/**/*.js --exit"
   },
   "author": "",
   "license": "ISC",
@@ -25,7 +26,6 @@
     "eslint-plugin-node": "^10.0.0",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
-    "jest": "^24.9.0",
     "mocha": "^6.2.2",
     "morgan": "^1.9.1",
     "nodemon": "^2.0.1"

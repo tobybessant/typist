@@ -2,8 +2,7 @@
 	"diff": true,
 	"package": "./package.json",
 	"slow": 75,
-	"timeout": 2000,
+	"timeout": 5000,
 	"ui": "tdd",
-	"extension": ["js"],
-	"spec": "test/**/*.js"
+	"extension": ["js"]	
 }
