@@ -9,70 +9,72 @@ const GameController = require("../../api/controllers/gameController")
 
 let gameController, req, res
 
-suite("Unit Tests :: GameController :: Valid Data", () => {
+suite("Unit Tests :: Game Controller\n", () => {
+	suite("Valid Data", () => {
 
-	setup(() => {
-		// setup mock model with a valid name property
-		let name = "Name!"
-		gameController = new GameController(MockGameModel)
+		setup(() => {
+			// setup mock model with a valid name property
+			let name = "Name!"
+			gameController = new GameController(MockGameModel)
 
-		// setup mock request and response
-		req = new MockRequest({ name })
-		res = new MockResponse()
+			// setup mock request and response
+			req = new MockRequest({ name })
+			res = new MockResponse()
+		})
+
+		teardown(() => {
+			gameController = null
+			req = null
+			res = null
+		})
+
+		test("Valid models return status code 200", async () => {
+			// test create game
+			await gameController.createGame(req, res)
+
+			// check status code of response
+			assert.propertyVal(res, "statusCode", 200, "Status code is not 200")
+		})
+
+		test("Valid models return a success message", async () => {
+			// test create game
+			await gameController.createGame(req, res)
+
+			// check message of response
+			assert.property(res.body, "message", "Response is missing a success message")
+		})
 	})
 
-	teardown(() => {
-		gameController = null
-		req = null
-		res = null
-	})
+	suite("Invalid Data", () => {
+		setup(() => {
+			// setup mock model with no name property
+			gameController = new GameController(MockGameModel)
 
-	test("Valid models return status code 200", async () => {
-		// test create game
-		await gameController.createGame(req, res)
-		
-		// check status code of response
-		assert.propertyVal(res, "statusCode", 200, "Status code is not 200")
-	})
+			// setup mock request and response
+			req = new MockRequest()
+			res = new MockResponse()
+		})
 
-	test("Valid models return a success message", async () => {
-		// test create game
-		await gameController.createGame(req, res)
+		teardown(() => {
+			gameController = null
+			req = null
+			res = null
+		})
 
-		// check message of response
-		assert.property(res.body, "message", "Response is missing a success message")
-	})
-})
+		test("Models without a name return status code 400", async () => {
+			// test create game 
+			await gameController.createGame(req, res)
 
-suite("Unit Tests :: GameController :: Invalid Data", () => {
-	setup(() => {
-		// setup mock model with no name property
-		gameController = new GameController(MockGameModel)
+			// check status code of response
+			assert.propertyVal(res, "statusCode", 400, "Status code is not 400")
+		})
 
-		// setup mock request and response
-		req = new MockRequest()
-		res = new MockResponse()
-	})
+		test("Models without a name return an error message", async () => {
+			// test create game 
+			await gameController.createGame(req, res)
 
-	teardown(() => {
-		gameController = null
-		req = null
-		res = null
-	})
-
-	test("Models without a name return status code 400", async () => {
-		// test create game 
-		await gameController.createGame(req ,res)
-
-		// check status code of response
-		assert.propertyVal(res, "statusCode", 400, "Status code is not 400")
-	})
-
-	test("Models without a name return an error message", async () => {
-		// test create game 
-		await gameController.createGame(req ,res)
-
-		// check error of response
-		assert.property(res.body, "error", "Error message is not present")
+			// check error of response
+			assert.property(res.body, "error", "Error message is not present")
+		})
 	})
 })

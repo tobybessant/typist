@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon --inspect index.js",
+    "test": "npm run test:unit && npm run test:integration",
     "test:unit": "NODE_ENV=test mocha -ui tdd test/unit/**/*.js --exit",
     "test:integration": "NODE_ENV=test mocha -ui bdd test/integration/**/*.js --exit"
   },
