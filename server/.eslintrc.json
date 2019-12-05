@@ -21,5 +21,14 @@
         "no-tabs": 0,
         "padded-blocks": 0
     },
-    "ignorePatterns": "test/"
+    "overrides": [
+        {
+            "files": [
+                "test/**/*.test.js"
+            ],
+            "env": {
+                "mocha": true
+            }
+        }
+    ]
 }

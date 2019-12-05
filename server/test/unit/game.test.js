@@ -14,7 +14,7 @@ suite("Unit Tests :: Game Controller\n", () => {
 
 		setup(() => {
 			// setup mock model with a valid name property
-			let name = "Name!"
+			const name = "Name!"
 			gameController = new GameController(MockGameModel)
 
 			// setup mock request and response
@@ -62,7 +62,7 @@ suite("Unit Tests :: Game Controller\n", () => {
 		})
 
 		test("Models without a name return status code 400", async () => {
-			// test create game 
+			// test create game
 			await gameController.createGame(req, res)
 
 			// check status code of response
@@ -70,7 +70,7 @@ suite("Unit Tests :: Game Controller\n", () => {
 		})
 
 		test("Models without a name return an error message", async () => {
-			// test create game 
+			// test create game
 			await gameController.createGame(req, res)
 
 			// check error of response
