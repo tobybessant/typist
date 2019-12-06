@@ -8,8 +8,8 @@ module.exports = class MockResponse {
 		this.body = data
 	}
 
- 	status(code) {
+	status(code) {
 		this.statusCode = code
 		return this
-	 }
+	}
 }

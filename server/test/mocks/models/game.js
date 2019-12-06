@@ -1,9 +1,9 @@
 module.exports = class MockGameModel {
-	
-	constructor(properties){
+
+	constructor(properties) {
 		this.properties = properties
 	}
-	
+
 	save() {
 		return this.properties
 	}
