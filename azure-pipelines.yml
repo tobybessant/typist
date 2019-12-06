@@ -24,7 +24,13 @@ steps:
   inputs:
     command: 'custom'
     workingDir: 'server'
-    customCommand: 'run test'
+    customCommand: 'run test:unit'
+
+- task: Npm@1
+  inputs:
+    command: 'custom'
+    workingDir: 'server'
+    customCommand: 'run test:integration'
 
 - task: Npm@1
   inputs:
