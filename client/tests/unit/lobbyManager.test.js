@@ -83,4 +83,40 @@ suite("Unit Tests :: Lobby Manager\n", () => {
 			assert.doesNotIncrease(lobbyManager.join(newPlayer), lobbyManager.connectedPlyers.length, "Number of connected players increases")
 		})
 	})
+
+	suite("Removing a player", () => {
+		let newPlayer
+
+		setup(() => {
+			hostName = "Toby"
+			newPlayer = "John"
+			lobbyManager = new LobbyManager(hostName)
+			lobbyManager.join(newPlayer)
+		})
+
+		teardown(() => {
+			lobbyManager = null
+			hostName = null
+			newPlayer = null
+		})
+
+		test("Number of connected players decreases by 1", async () => {
+			assert.decreasesBy(lobbyManager.leave(newPlayer), lobbyManager.connectedPlyers.length, "Number of connected players does not decrease by 1")
+		})
+
+		test("Leaving player is no longer in the connectedPlayers list", async () => {
+			lobbyManager.leave(newPlayer)
+			assert.notInclude(lobbyManager.connectedPlyers, newPlayer, "Leaving player is still a connectedPlayer")
+		})
+
+		test("Throws an error if the leaving player is null", async () => {
+			newPlayer = null
+			assert.throws(lobbyManager.leave(newPlayer), Error("Null player exception"), "Null player exception not thrown")
+		})
+
+		test("Does not throw an error if the leaving player is not in the lobby", async () => {
+			newPlayer = "Joanne"
+			assert.doesNotThrow(lobbyManager.leave(newPlayer), Error("Null player exception"), "Null player exception is thrown")
+		})
+	})
 })
