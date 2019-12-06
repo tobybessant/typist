@@ -110,7 +110,7 @@ suite("Unit Tests :: Lobby Manager\n", () => {
 
 		test("Does not throw an error if the leaving player is not in the lobby", async () => {
 			newPlayer = "Joanne"
-			assert.doesNotThrow((newPlayer) => lobbyManager.leave(newPlayer), "Null player exception", "Null player exception is thrown")
+			assert.doesNotThrow((newPlayer) => lobbyManager.leave(newPlayer), "Null player exception is thrown")
 		})
 	})
 })
