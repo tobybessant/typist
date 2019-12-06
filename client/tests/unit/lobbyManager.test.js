@@ -19,15 +19,9 @@ suite("Unit Tests :: Lobby Manager\n", () => {
 			assert.propertyVal(lobbyManager, "host", hostName, "Host name not set correctly")
 		})
 
-		test("Does not set the host for invalid data", async () => {
-			hostName = null
-			lobbyManager = new LobbyManager(hostName)
-			assert.isUndefined(lobbyManager.host, "Host name was set with invalid data")
-		})
-
 		test("Throws an error when constructed with invalid host name", async () => {
 			hostName = null
-			assert.throws(new LobbyManager(hostName), Error, "Error thrown")
+			assert.throws((hostName) => new LobbyManager(hostName), "Null host exception", "Null host exception not thrown")
 		})
 
 		test("The connected players array is initialised as empty", () => {
@@ -111,12 +105,12 @@ suite("Unit Tests :: Lobby Manager\n", () => {
 
 		test("Throws an error if the leaving player is null", async () => {
 			newPlayer = null
-			assert.throws(lobbyManager.leave(newPlayer), Error("Null player exception"), "Null player exception not thrown")
+			assert.throws((newPlayer) => lobbyManager.leave(newPlayer), "Null player exception", "Null player exception not thrown")
 		})
 
 		test("Does not throw an error if the leaving player is not in the lobby", async () => {
 			newPlayer = "Joanne"
-			assert.doesNotThrow(lobbyManager.leave(newPlayer), Error("Null player exception"), "Null player exception is thrown")
+			assert.doesNotThrow((newPlayer) => lobbyManager.leave(newPlayer), "Null player exception", "Null player exception is thrown")
 		})
 	})
 })
