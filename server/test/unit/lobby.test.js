@@ -1,6 +1,6 @@
 const chai = require("chai")
 const assert = chai.assert
-const LobbyManager = require("../../src/services/lobbyManager")
+const Lobby = require("../../websocket/models/Lobby")
 
 suite("Unit Tests :: Lobby Manager\n", () => {
 
@@ -17,7 +17,11 @@ suite("Unit Tests :: Lobby Manager\n", () => {
 		suite("Valid data", () => {
 			setup(() => {
 				host = "Toby"
-				lobby = new LobbyManager(host)
+				lobby = new Lobby(host)
+			})
+
+			test("Creates an ID", () => {
+				assert.isDefined(lobby, "id", "ID has not been set")
 			})
 
 			test("Sets the host", async () => {
@@ -25,12 +29,12 @@ suite("Unit Tests :: Lobby Manager\n", () => {
 			})
 
 			test("The connectedPlayers array is initialised as empty", () => {
-				assert.isArray(lobby.connectedPlyers, "connectedPlayers is not an array")
+				assert.isArray(lobby.connectedPlayers, "connectedPlayers is not an array")
 			})
 
 			test("Host is added to the connectedPlayers array", () => {
-				assert.lengthOf(lobby.connectedPlyers, 1, "connectedPlayers is not length 1")
-				assert.include(lobby.connectedPlyers, host, "connectedPlayers does not contain the host")
+				assert.lengthOf(lobby.connectedPlayers, 1, "connectedPlayers is not length 1")
+				assert.include(lobby.connectedPlayers, host, "connectedPlayers does not contain the host")
 			})
 		})
 
@@ -41,7 +45,17 @@ suite("Unit Tests :: Lobby Manager\n", () => {
 
 			test("Throws an error when constructed with invalid host name", async () => {
 				host = null
-				assert.throws((hostName) => new LobbyManager(hostName), "Null host exception", "Null host exception not thrown")
+				assert.throws((hostName) => new Lobby(hostName), "Null host exception", "Null host exception not thrown")
+			})
+
+			test("Does not set the host", () => {
+				assert.throws((hostName) => new Lobby(hostName), "Null host exception")
+				assert.isNull(lobby, "host", "Host has been set")
+			})
+
+			test("Does not set connectedPlayers", () => {
+				assert.throws((hostName) => new Lobby(hostName), "Null host exception")
+				assert.isNull(lobby, "connectedPlayers", "connectedPlayers has been set")
 			})
 		})
 
@@ -52,20 +66,20 @@ suite("Unit Tests :: Lobby Manager\n", () => {
 			setup(() => {
 				host = "Toby"
 				newPlayer = "John"
-				lobby = new LobbyManager(host)
+				lobby = new Lobby(host)
 			})
 
 			test("Valid player is added to connected players array", async () => {
 				lobby.join(newPlayer)
 
-				assert.include(lobby.connectedPlyers, newPlayer, "connectedPlayers does not contain the new player")
+				assert.include(lobby.connectedPlayers, newPlayer, "connectedPlayers does not contain the new player")
 			})
 
 			test("Number of connected players increases by 1", async () => {
-				let initialCount = lobby.connectedPlyers.length
+				let initialCount = lobby.connectedPlayers.length
 				lobby.join(newPlayer)
 
-				assert(lobby.connectedPlyers.length === ++initialCount)
+				assert(lobby.connectedPlayers.length === ++initialCount)
 			})
 		})
 
@@ -74,7 +88,7 @@ suite("Unit Tests :: Lobby Manager\n", () => {
 			setup(() => {
 				host = "Toby"
 				newPlayer = null
-				lobby = new LobbyManager(host)
+				lobby = new Lobby(host)
 			})
 
 			test("Adding an invalid player throws an error", async () => {
@@ -83,14 +97,14 @@ suite("Unit Tests :: Lobby Manager\n", () => {
 
 			test("Invalid player is not added to connected players array", async () => {
 				assert.throws((newPlayer) => lobby.join(newPlayer), "Null player exception")
-				assert.notInclude(lobby.connectedPlyers, newPlayer)
+				assert.notInclude(lobby.connectedPlayers, newPlayer)
 			})
 
 			test("Number of connected players does not increase", async () => {
-				let initialCount = lobby.connectedPlyers.length
+				const initialCount = lobby.connectedPlayers.length
 
 				assert.throws((newPlayer) => lobby.join(newPlayer), "Null player exception")
-				assert(initialCount === lobby.connectedPlyers.length, "Number of connected players increases")
+				assert(initialCount === lobby.connectedPlayers.length, "Number of connected players increases")
 			})
 		})
 	})
@@ -101,20 +115,20 @@ suite("Unit Tests :: Lobby Manager\n", () => {
 			setup(() => {
 				host = "Toby"
 				newPlayer = "John"
-				lobby = new LobbyManager(host)
+				lobby = new Lobby(host)
 				lobby.join(newPlayer)
-			})
-
-			test("Number of connected players decreases by 1", async () => {
-				let initialCount = lobby.connectedPlyers.length
-				lobby.leave(newPlayer)
-
-				assert(lobby.connectedPlyers.length === --initialCount)
 			})
 
 			test("Leaving player is no longer in the connectedPlayers array", async () => {
 				lobby.leave(newPlayer)
-				assert.notInclude(lobby.connectedPlyers, newPlayer, "Leaving player is still a connectedPlayer")
+				assert.notInclude(lobby.connectedPlayers, newPlayer, "Leaving player is still a connectedPlayer")
+			})
+
+			test("Number of connected players decreases by 1", async () => {
+				let initialCount = lobby.connectedPlayers.length
+				lobby.leave(newPlayer)
+
+				assert(lobby.connectedPlayers.length === --initialCount)
 			})
 		})
 		suite("Invalid data", () => {
@@ -122,11 +136,18 @@ suite("Unit Tests :: Lobby Manager\n", () => {
 			setup(() => {
 				host = "Toby"
 				newPlayer = null
-				lobby = new LobbyManager(host)
+				lobby = new Lobby(host)
 			})
 
-			test("Throws an error if the leaving player is null", async () => {
-				assert.throws((newPlayer) => lobby.leave(newPlayer), "Null player exception", "Null player exception not thrown")
+			test("Does not throw an error if the leaving player is null", async () => {
+				assert.doesNotThrow((newPlayer) => lobby.leave(newPlayer), "Null player exception", "Null player exception not thrown")
+			})
+
+			test("Number of connected players remains the same", async () => {
+				const initialCount = lobby.connectedPlayers.length
+				lobby.leave(newPlayer)
+
+				assert(lobby.connectedPlayers.length === initialCount)
 			})
 
 			test("Does not throw an error if the leaving player is not in the lobby", async () => {
