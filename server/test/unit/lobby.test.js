@@ -1,6 +1,6 @@
 const chai = require("chai")
 const assert = chai.assert
-const Lobby = require("../../websocket/models/Lobby")
+const Lobby = require("../../api/models/lobby")
 
 suite("Unit Tests :: Lobby Manager\n", () => {
 
