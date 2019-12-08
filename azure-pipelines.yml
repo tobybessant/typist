@@ -30,4 +30,4 @@ steps:
   inputs:
     command: 'custom'
     workingDir: 'server'
-    customCommand: 'run test:integration'
+    customCommand: 'run test:integration -- --DB_STRING_test=$(TEST_DB_STRING)'

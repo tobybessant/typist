@@ -7,6 +7,16 @@ const database = require("./database")
 
 // environment config
 dotenv.config()
+
+// search npm args for test db string (azure pipeline env var)
+process.argv.forEach(function (arg) {
+	if (arg.includes("DB_STRING_test")) {
+		const valueDelim = arg.indexOf("=")
+		process.env.DB_STRING_test = arg.substring(valueDelim + 1)
+	}
+})
+
+// set port and fetch appropriate db string
 const PORT = process.env.PORT || 3000
 const DB_STRING = process.env["DB_STRING_" + process.env.NODE_ENV]
 
