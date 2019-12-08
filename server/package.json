@@ -7,7 +7,7 @@
     "dev": "nodemon --inspect index.js",
     "test": "npm run test:unit && npm run test:integration",
     "test:unit": "NODE_ENV=test mocha -ui tdd test/unit/**/*.js --exit",
-    "test:integration": "NODE_ENV=test mocha -ui bdd test/integration/**/*.js --exit"
+    "test:integration": "NODE_ENV=test mocha -ui bdd test/integration/**/*.js"
   },
   "author": "",
   "license": "ISC",
@@ -16,11 +16,13 @@
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "mongodb": "^3.3.5",
-    "mongoose": "^5.7.12"
+    "mongoose": "^5.7.12",
+    "ws": "^7.2.0"
   },
   "devDependencies": {
     "chai": "^4.2.0",
     "chai-http": "^4.3.0",
+    "cors": "^2.8.5",
     "eslint": "^6.7.1",
     "eslint-config-standard": "^14.1.0",
     "eslint-plugin-import": "^2.18.2",
@@ -28,6 +30,7 @@
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
     "mocha": "^6.2.2",
+    "mongodb-memory-server": "^6.0.2",
     "morgan": "^1.9.1",
     "nodemon": "^2.0.1"
   }

@@ -31,14 +31,3 @@ steps:
     command: 'custom'
     workingDir: 'server'
     customCommand: 'run test:integration'
-
-- task: Npm@1
-  inputs:
-    command: 'install'
-    workingDir: 'client'
-
-- task: Npm@1
-  inputs:
-      command: 'custom'
-      workingDir: 'client'
-      customCommand: 'run test'

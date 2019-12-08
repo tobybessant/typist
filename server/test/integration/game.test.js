@@ -27,10 +27,10 @@ describe("-= Running Integration Tests =-\n", () => {
 			})
 
 			it("Should return a new game", async () => {
-				let res = await chai.request(app)
-									.post("/api/game/new")
-									.set("Content-Type", "application/json")
-									.send(gameData)
+				const res = await chai.request(app)
+					.post("/api/game/new")
+					.set("Content-Type", "application/json")
+					.send(gameData)
 
 				expect(res.status).to.equal(200, "Status not 200")
 				expect(res.body).to.be.instanceOf(Object, "Response data is not JSON")
@@ -40,7 +40,7 @@ describe("-= Running Integration Tests =-\n", () => {
 		})
 
 		describe("Invalid Data", () => {
-			
+
 			before(() => {
 				gameData = game({ })
 			})
@@ -50,10 +50,10 @@ describe("-= Running Integration Tests =-\n", () => {
 			})
 
 			it("Should not add erronous games", async () => {
-				let res = await chai.request(app)
-									.post("/api/game/new")
-									.set("Content-Type", "application/json")
-									.send(gameData)
+				const res = await chai.request(app)
+					.post("/api/game/new")
+					.set("Content-Type", "application/json")
+					.send(gameData)
 
 				expect(res.status).to.equal(400, "Status not 400")
 				expect(res.body).to.have.property("error", "Malformed request")
