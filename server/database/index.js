@@ -12,7 +12,7 @@ module.exports = {
 	database: null,
 	async connect (uri) {
 		if (uri === undefined) {
-			const mongoMemoryServer = new MongoMemoryServer({ instance: { port: 4040 } })
+			const mongoMemoryServer = new MongoMemoryServer()
 			uri = await mongoMemoryServer.getConnectionString()
 		}
 		console.log(uri)
