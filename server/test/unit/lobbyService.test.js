@@ -41,12 +41,12 @@ suite("Unit Tests :: Lobby Service", () => {
 			})
 
 			test("An error is thrown", () => {
-				assert.throws((lobby) => lobbyService.addLobby(lobby))
+				assert.throws(() => lobbyService.addLobby(lobby))
 			})
 
 			test("The count of active lobbies remains the same", () => {
 				const initialCount = lobbyService.activeLobbies
-				assert.throws((lobby) => lobbyService.addLobby(lobby))
+				assert.throws(() => lobbyService.addLobby(lobby))
 				assert(lobbyService.activeLobbies === (initialCount))
 			})
 		})
@@ -58,12 +58,12 @@ suite("Unit Tests :: Lobby Service", () => {
 			})
 
 			test("An error is thrown", () => {
-				assert.throws((lobby) => lobbyService.addLobby(lobby))
+				assert.throws(() => lobbyService.addLobby(lobby))
 			})
 
 			test("The count of active lobbies remains the same", () => {
 				const initialCount = lobbyService.activeLobbies
-				assert.throws((lobby) => lobbyService.addLobby(lobby))
+				assert.throws(() => lobbyService.addLobby(lobby))
 				assert(lobbyService.activeLobbies === (initialCount))
 			})
 		})
@@ -96,7 +96,7 @@ suite("Unit Tests :: Lobby Service", () => {
 			})
 
 			test("Throws lobby does not exist error", () => {
-				assert.throws((searchId) => lobbyService.getLobby(searchId), "Lobby does not exist")
+				assert.throws(() => lobbyService.getLobby(searchId), "Lobby does not exist")
 			})
 		})
 
@@ -106,8 +106,8 @@ suite("Unit Tests :: Lobby Service", () => {
 				lobby = new MockLobby(id)
 			})
 
-			test("Throws lobby does not exist error", () => {
-				assert.throws(() => lobbyService.getLobby(null), "Lobby does not exist")
+			test("Throws Invalid search ID error", () => {
+				assert.throws(() => lobbyService.getLobby(null), "Invalid search ID")
 			})
 		})
 	})
