@@ -1,0 +1,175 @@
+const chai = require("chai")
+const assert = chai.assert
+const Spy = require("../utilities/spy")
+const LobbyManager = require("../../api/controllers/LobbyManager")
+
+suite("Unit Tests :: Lobby Manager", () => {
+	let io, socket, lobbyManager, lobbyId
+
+	teardown(() => {
+		socket = null
+		io = null
+		lobbyManager = null
+	})
+
+	suite("Accepts a new connection", () => {
+		setup(() => {
+			io = Spy().on("on")
+			lobbyManager = new LobbyManager(io)
+		})
+
+		test("io.handle() is called once", () => {
+			assert(io.on.calls.length === 1)
+		})
+
+		test("io.handle() is called with 'connection' to handle a new connnection event", () => {
+			assert(io.on.calls[0][0] === "connection")
+		})
+
+		test("io.handle() is called with a callback", () => {
+			assert(typeof io.on.calls[0][1] === "function")
+		})
+
+		test("io.handle() is called with a callback called 'handleConnection'", () => {
+			assert(io.on.calls[0][1].toString().includes("handleConnection"))
+		})
+	})
+
+	suite("Handle connection registers the correct events", () => {
+		setup(() => {
+			io = Spy().on("on")
+			socket = Spy().on("on")
+			lobbyManager = new LobbyManager(io)
+			lobbyManager.handleConnection(socket)
+		})
+
+		test("'Socket.on()' is called at least once", () => {
+			assert(socket.on.calls.length >= 1)
+		})
+
+		test("'Socket.on()' is called to register a 'CREATE_LOBBY' handler", () => {
+			let calledWithCreateLobby = false
+			for (let i = 0; i < socket.on.calls.length; i++) {
+				const call = socket.on.calls[i]
+				if (call.includes("CREATE_LOBBY")) {
+					calledWithCreateLobby = true
+					return
+				}
+				return
+			}
+			assert(calledWithCreateLobby)
+		})
+
+		test("'Socket.on()' is called to register a 'CREATE_LOBBY' handler with a callback function", () => {
+			let createLobbyHasCallback = false
+			for (let i = 0; i < socket.on.calls.length; i++) {
+				const call = socket.on.calls[i]
+				if (call.includes("CREATE_LOBBY")) {
+					for (let j = 0; j < call[i].length; j++) {
+						const arg = call[i][j]
+						if (typeof arg === "function") {
+							createLobbyHasCallback = true
+							return
+						}
+					}
+				}
+				return
+			}
+			assert(createLobbyHasCallback)
+		})
+
+		test("'Socket.on()' is called to register a 'JOIN_LOBBY' handler", () => {
+			let calledWithCreateLobby = false
+			for (let i = 0; i < socket.on.calls.length; i++) {
+				const call = socket.on.calls[i]
+				if (call.includes("JOIN_LOBBY")) {
+					calledWithCreateLobby = true
+					return
+				}
+				return
+			}
+			assert(calledWithCreateLobby)
+		})
+
+		test("'Socket.on()' is called to register a 'JOIN_LOBBY' handler with a callback function", () => {
+			let joinLobbyHasCallback = false
+			for (let i = 0; i < socket.on.calls.length; i++) {
+				const call = socket.on.calls[i]
+				if (call.includes("JOIN_LOBBY")) {
+					for (let j = 0; j < call[i].length; j++) {
+						const arg = call[i][j]
+						if (typeof arg === "function") {
+							joinLobbyHasCallback = true
+							return
+						}
+					}
+				}
+				return
+			}
+			assert(joinLobbyHasCallback)
+		})
+	})
+
+	suite("Create lobby joins the  socket into a new room", () => {
+		setup(() => {
+			io = Spy().on("emit")
+			io.on("in", null, io)
+			io.on("on")
+
+			socket = Spy().on("join")
+
+			lobbyManager = new LobbyManager(io)
+			lobbyManager.createLobby(socket, { username: "Toby" })
+		})
+
+		test("socket.join() is called once", () => {
+			assert(socket.join.calls.length === 1)
+		})
+
+		test("io.in([room]).emit() is called once", () => {
+			assert(io.emit.calls.length === 1)
+		})
+
+		test("io.in([room]).emit() is called sending the event 'STATE_UPDATE'", () => {
+			assert(io.emit.calls[0][0] === "STATE_UPDATE")
+		})
+	})
+
+	suite("Join lobby joins the  socket into a room", () => {
+		setup(() => {
+			io = Spy().on("emit")
+			io.on("in", null, io)
+			io.on("on")
+
+			socket = Spy().on("join")
+
+			lobbyManager = new LobbyManager(io)
+			lobbyManager.createLobby(socket, { username: "Toby" })
+
+			lobbyId = socket.join.calls[0][0]
+			const username = "John"
+
+			// reset call values
+			io.reset()
+			socket.reset()
+
+			lobbyManager.joinLobby(socket, { lobbyId, username })
+		})
+
+		test("socket.join() is called once", () => {
+			assert(socket.join.calls.length === 1)
+		})
+
+		test("socket.join() is called with the room id", () => {
+			assert(socket.join.calls[0][0] === lobbyId)
+		})
+
+		test("io.in([room]).emit() is called once", () => {
+			assert(io.emit.calls.length === 1)
+		})
+
+		test("io.in([room]).emit() is called sending the event 'STATE_UPDATE'", () => {
+			assert(io.emit.calls[0][0] === "STATE_UPDATE")
+		})
+	})
+})

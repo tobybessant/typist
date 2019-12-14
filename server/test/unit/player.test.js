@@ -1,26 +1,25 @@
 const chai = require("chai")
 const assert = chai.assert
-const Player = require("../../api/models/player")
+const Player = require("../../api/controllers/player")
 
 suite("Unit Tests :: Player\n", () => {
 
-	let player, username
+	let PLAYER_COUNT, players, player, username
 
 	teardown(() => {
 		player = null
 		username = null
 	})
 
-	suite("Initialising a new lobby manager", () => {
+	suite("Initialising a new player", () => {
 
 		suite("Valid data", () => {
 			setup(() => {
-				player = new Player()
 				username = "Toby"
 			})
 
 			test("Player username is set correctly", () => {
-				player.setUsername(username)
+				player = new Player(null, username)
 				assert(player.username === username)
 			})
 		})
@@ -28,12 +27,29 @@ suite("Unit Tests :: Player\n", () => {
 		suite("Invalid data [ null username ]", () => {
 
 			setup(() => {
-				player = new Player()
+				username = null
 			})
 
 			test("Throws an error", () => {
-				assert.throws(() => player.setUsername(username), "Invalid username")
+				assert.throws(() => new Player(username), "Invalid username")
 			})
+		})
+	})
+
+	suite("Player UUID generation", () => {
+		setup(() => {
+			PLAYER_COUNT = 10000
+			players = []
+			for (let i = 0; i < PLAYER_COUNT; i++) {
+				players.push(new Player(null, "p"))
+			}
+		})
+
+		test("UUID is unique amongst 10,000 players", () => {
+			const uniquePlayerIdCount = players.filter((player, i, self) => {
+				return self.indexOf(player) === i
+			})
+			assert(uniquePlayerIdCount.length === PLAYER_COUNT)
 		})
 	})
 })
