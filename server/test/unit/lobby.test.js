@@ -1,7 +1,7 @@
 const chai = require("chai")
 const assert = chai.assert
 const MockSocket = require("../mocks/socket/socket")
-const Lobby = require("../../api/controllers/lobby")
+const Lobby = require("../../api/controllers/Lobby")
 
 suite("Unit Tests :: Lobby\n", () => {
 

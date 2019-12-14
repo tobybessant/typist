@@ -1,6 +1,6 @@
 const chai = require("chai")
 const assert = chai.assert
-const Player = require("../../api/controllers/player")
+const Player = require("../../api/controllers/Player")
 
 suite("Unit Tests :: Player\n", () => {
 
