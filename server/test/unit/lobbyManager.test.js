@@ -14,7 +14,7 @@ suite("Unit Tests :: Lobby Manager", () => {
 
 	suite("Accepts a new connection", () => {
 		setup(() => {
-			io = Spy().on("on")
+			io = Spy().onMethod("on")
 			lobbyManager = new LobbyManager(io)
 		})
 
@@ -37,8 +37,8 @@ suite("Unit Tests :: Lobby Manager", () => {
 
 	suite("Handle connection registers the correct events", () => {
 		setup(() => {
-			io = Spy().on("on")
-			socket = Spy().on("on")
+			io = Spy().onMethod("on")
+			socket = Spy().onMethod("on")
 			lobbyManager = new LobbyManager(io)
 			lobbyManager.handleConnection(socket)
 		})
@@ -110,13 +110,16 @@ suite("Unit Tests :: Lobby Manager", () => {
 		})
 	})
 
-	suite("Create lobby joins the  socket into a new room", () => {
+	suite("Create lobby joins the  socket into a new room and sends the player their details", () => {
 		setup(() => {
-			io = Spy().on("emit")
-			io.on("in", null, io)
-			io.on("on")
+			io = Spy()
+				.onMethod("emit")
+				.onMethod("on")
+			io
+				.onMethod("in", null, io)
+				.onMethod("to", null, io)
 
-			socket = Spy().on("join")
+			socket = Spy().onMethod("join")
 
 			lobbyManager = new LobbyManager(io)
 			lobbyManager.createLobby(socket, { username: "Toby" })
@@ -126,22 +129,31 @@ suite("Unit Tests :: Lobby Manager", () => {
 			assert(socket.join.calls.length === 1)
 		})
 
-		test("io.in([room]).emit() is called once", () => {
-			assert(io.emit.calls.length === 1)
+		test("io.in([room]).emit() is called twice", () => {
+			assert(io.emit.calls.length === 2)
+		})
+
+		test("io.in([room]).emit() is called sending the event 'SELF'", () => {
+			assert(io.emit.calls[0][0] === "SELF")
 		})
 
 		test("io.in([room]).emit() is called sending the event 'STATE_UPDATE'", () => {
-			assert(io.emit.calls[0][0] === "STATE_UPDATE")
+			assert(io.emit.calls[1][0] === "STATE_UPDATE")
 		})
 	})
 
-	suite("Join lobby joins the  socket into a room", () => {
+	suite("Join lobby joins the  socket into a room and sends the player their details", () => {
 		setup(() => {
-			io = Spy().on("emit")
-			io.on("in", null, io)
-			io.on("on")
+			io = Spy()
+				.onMethod("emit")
+				.onMethod("on")
 
-			socket = Spy().on("join")
+			io
+				.onMethod("in", null, io)
+				.onMethod("to", null, io)
+
+			socket = Spy()
+				.onMethod("join")
 
 			lobbyManager = new LobbyManager(io)
 			lobbyManager.createLobby(socket, { username: "Toby" })
@@ -164,12 +176,16 @@ suite("Unit Tests :: Lobby Manager", () => {
 			assert(socket.join.calls[0][0] === lobbyId)
 		})
 
-		test("io.in([room]).emit() is called once", () => {
-			assert(io.emit.calls.length === 1)
+		test("io.in([room]).emit() is called twice", () => {
+			assert(io.emit.calls.length === 2)
+		})
+
+		test("io.in([room]).emit() is called sending the event 'SELF'", () => {
+			assert(io.emit.calls[0][0] === "SELF")
 		})
 
 		test("io.in([room]).emit() is called sending the event 'STATE_UPDATE'", () => {
-			assert(io.emit.calls[0][0] === "STATE_UPDATE")
+			assert(io.emit.calls[1][0] === "STATE_UPDATE")
 		})
 	})
 })

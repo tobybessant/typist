@@ -4,12 +4,12 @@
   * http://matthewmanela.com/blog/a-simple-javascript-stubbing-function/
   *
   * DISCLAIMER This function has been slightly modified:
-  * 	- function name changed from 'stub()' & 'of' -> 'spy()' & 'on'
-  * 	- added reset function to reset function call data
+  * 	+ function name changed from 'stub()' & 'of' -> 'spy()' & 'onMethod'
+  * 	+ added reset function to reset function call data
   **/
 module.exports = function spy() {
 	return {
-		on: function (name, callback, returnValue) {
+		onMethod: function (name, callback, returnValue) {
 			this[name] = function () {
 				var args = Array.prototype.slice.call(arguments)
 				this[name].calls.push(args)
@@ -25,7 +25,7 @@ module.exports = function spy() {
 		},
 		reset: function () {
 			for (const method in this) {
-				if (method !== "reset") { this[method].calls = [] }
+				if (method !== "reset" && method !== "onMethod") { this[method].calls = [] }
 			}
 		}
 	}
