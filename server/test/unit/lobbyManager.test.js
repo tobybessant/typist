@@ -4,7 +4,7 @@ const Spy = require("../utilities/spy")
 const LobbyManager = require("../../api/controllers/LobbyManager")
 
 suite("Unit Tests :: Lobby Manager", () => {
-	let io, socket, lobbyManager, lobbyId
+	let io, socket, socketB, lobbyManager, lobbyId
 
 	teardown(() => {
 		socket = null
@@ -108,6 +108,68 @@ suite("Unit Tests :: Lobby Manager", () => {
 			}
 			assert(joinLobbyHasCallback)
 		})
+
+		test("'Socket.on()' is called to register a 'REQUEST_SELF' handler", () => {
+			let calledWithCreateLobby = false
+			for (let i = 0; i < socket.on.calls.length; i++) {
+				const call = socket.on.calls[i]
+				if (call.includes("REQUEST_SELF")) {
+					calledWithCreateLobby = true
+					return
+				}
+				return
+			}
+			assert(calledWithCreateLobby)
+		})
+
+		test("'Socket.on()' is called to register a 'REQUEST_SELF' handler with a callback function", () => {
+			let requestSelfHasCallback = false
+			for (let i = 0; i < socket.on.calls.length; i++) {
+				const call = socket.on.calls[i]
+				if (call.includes("REQUEST_SELF")) {
+					for (let j = 0; j < call[i].length; j++) {
+						const arg = call[i][j]
+						if (typeof arg === "function") {
+							requestSelfHasCallback = true
+							return
+						}
+					}
+				}
+				return
+			}
+			assert(requestSelfHasCallback)
+		})
+
+		test("'Socket.on()' is called to register a 'disconnect' handler", () => {
+			let calledWithCreateLobby = false
+			for (let i = 0; i < socket.on.calls.length; i++) {
+				const call = socket.on.calls[i]
+				if (call.includes("disconnect")) {
+					calledWithCreateLobby = true
+					return
+				}
+				return
+			}
+			assert(calledWithCreateLobby)
+		})
+
+		test("'Socket.on()' is called to register a 'disconnect' handler with a callback function", () => {
+			let disconnectHasCallback = false
+			for (let i = 0; i < socket.on.calls.length; i++) {
+				const call = socket.on.calls[i]
+				if (call.includes("disconnect")) {
+					for (let j = 0; j < call[i].length; j++) {
+						const arg = call[i][j]
+						if (typeof arg === "function") {
+							disconnectHasCallback = true
+							return
+						}
+					}
+				}
+				return
+			}
+			assert(disconnectHasCallback)
+		})
 	})
 
 	suite("Create lobby joins the  socket into a new room and sends the player their details", () => {
@@ -142,7 +204,7 @@ suite("Unit Tests :: Lobby Manager", () => {
 		})
 	})
 
-	suite("Join lobby joins the  socket into a room and sends the player their details", () => {
+	suite("Join lobby joins the socket into a room and sends the player their details", () => {
 		setup(() => {
 			io = Spy()
 				.onMethod("emit")
@@ -186,6 +248,54 @@ suite("Unit Tests :: Lobby Manager", () => {
 
 		test("io.in([room]).emit() is called sending the event 'STATE_UPDATE'", () => {
 			assert(io.emit.calls[1][0] === "STATE_UPDATE")
+		})
+	})
+
+	suite("Leave lobby removes the socket from a room and updates the rest of the room with the new state", () => {
+		setup(() => {
+			io = Spy()
+				.onMethod("emit")
+				.onMethod("on")
+
+			io
+				.onMethod("in", null, io)
+				.onMethod("to", null, io)
+
+			const socket = Spy()
+				.onMethod("join")
+				.onMethod("disconnect")
+			socket.id = "socket_a"
+
+			socketB = Spy()
+				.onMethod("join")
+				.onMethod("disconnect")
+			socketB.id = "socket_b"
+
+			lobbyManager = new LobbyManager(io)
+			lobbyManager.createLobby(socket, { username: "Toby" })
+
+			lobbyId = socket.join.calls[0][0]
+			const username = "John"
+
+			lobbyManager.joinLobby(socketB, { lobbyId, username })
+
+			// reset call values
+			io.reset()
+			socket.reset()
+
+			lobbyManager.leaveLobby(socketB)
+		})
+
+		test("socket.disconnect() was called once", () => {
+			assert(socketB.disconnect.calls.length === 1)
+		})
+
+		test("io.emit() was called once", () => {
+			assert(io.emit.calls.length === 1)
+		})
+
+		test("io.emit() was called sending the event 'STATE_UPDATE'", () => {
+			assert(io.emit.calls[0][0] === "STATE_UPDATE")
 		})
 	})
 })

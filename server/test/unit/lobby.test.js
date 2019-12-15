@@ -132,7 +132,7 @@ suite("Unit Tests :: Lobby\n", () => {
 
 			test("Leaving player is no longer in the players array", async () => {
 				const newestPlayer = lobby.players[1]
-				lobby.leave(newestPlayer)
+				lobby.leave(socket, newestPlayer)
 				assert.notInclude(lobby.players, newestPlayer, "Leaving player is still a connectedPlayer")
 			})
 
@@ -140,7 +140,7 @@ suite("Unit Tests :: Lobby\n", () => {
 				let initialCount = lobby.players.length
 
 				const newestPlayer = lobby.players[1]
-				lobby.leave(newestPlayer)
+				lobby.leave(socket, newestPlayer)
 
 				assert(lobby.players.length === --initialCount)
 			})
