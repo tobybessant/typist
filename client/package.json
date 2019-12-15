@@ -6,11 +6,12 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "test-vue:unit": "vue-cli-service test:unit",
-    "test:unit": "mocha -ui tdd tests/unit/**/*.js --exit"
+    "test": "vue-cli-service test:unit --recursive 'tests/**/*.test.js'"
   },
   "dependencies": {
     "core-js": "^3.4.3",
+    "socket.io": "^2.3.0",
+    "uws": "^100.0.1",
     "vue": "^2.6.10",
     "vue-router": "^3.1.3"
   },
