@@ -7,7 +7,6 @@ module.exports = class Lobby {
 			this.code = this.generateCode()
 			this.players = []
 			this.paragraph = null
-			this.self = null
 
 			this.join(socket, hostPlayer)
 		} else {
@@ -28,37 +27,53 @@ module.exports = class Lobby {
 		}
 	}
 
-	leave(player) {
+	leave(socket, player) {
 		if (player) {
+			socket.disconnect()
 			this.players = this.players.filter((p) => {
 				return p.id !== player.id
 			})
 		}
 	}
 
+	async playerUpdate(player) {
+		return new Promise((resolve, reject) => {
+			this.players.forEach((p) => {
+				if (p.id === player.id) {
+					p.isReady = player.isReady
+					resolve()
+				}
+			})
+			reject(new Error("No player with that ID"))
+		})
+	}
+
 	getPlayerList() {
 		const pl = []
 		this.players.forEach((player) => {
 			pl.push({
+				id: player.id,
+				socketId: player.socket.id,
 				username: player.username,
-				isReady: player.isReady,
-				id: player.id
+				isReady: player.isReady
 			})
 		})
 		return pl
 	}
 
-	getPlayer(socketId) {
+	getPlayerBySocketId(socketId) {
 		for (let i = 0; i < this.players.length; i++) {
 			const player = this.players[i]
 			if (player.socket.id === socketId) {
 				return {
+					id: player.id,
+					socketId: socketId,
 					username: player.username,
-					isReady: player.isReady,
-					id: player.id
+					isReady: player.isReady
 				}
 			}
 		}
+		return null
 	}
 
 	generateCode() {

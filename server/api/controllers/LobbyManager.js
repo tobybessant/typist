@@ -12,6 +12,9 @@ module.exports = class LobbyManager {
 		socket.on("CREATE_LOBBY", (data) => this.createLobby(socket, data))
 		socket.on("JOIN_LOBBY", (data) => this.joinLobby(socket, data))
 		socket.on("REQUEST_SELF", (data) => this.sendPlayerDetails(socket, data))
+		socket.on("PLAYER_STATE_UPDATE", (data) => this.playerUpdate(socket, data))
+
+		socket.on("disconnect", (data) => this.leaveLobby(socket, data))
 	}
 
 	createLobby(socket, data) {
@@ -20,7 +23,6 @@ module.exports = class LobbyManager {
 			this.lobbies[lobby.code] = lobby
 			this.sendPlayerDetails(socket, lobby.code)
 			this.updateLobby(lobby)
-			// console.log(this.lobbies[lobby.code])
 		}
 	}
 
@@ -30,6 +32,16 @@ module.exports = class LobbyManager {
 			lobby.join(socket, data.username)
 			this.sendPlayerDetails(socket, lobby.code)
 			this.updateLobby(lobby)
+		}
+	}
+
+	leaveLobby(socket) {
+		if (socket) {
+			const connection = this.findPlayerNoLobbyId(socket)
+			if (connection) {
+				connection.lobby.leave(socket, connection.player)
+				this.updateLobby(connection.lobby)
+			}
 		}
 	}
 
@@ -43,14 +55,36 @@ module.exports = class LobbyManager {
 	}
 
 	sendPlayerDetails(socket, lobbyCode) {
-		const player = this.findPlayer(socket, lobbyCode)
+		const player = this.findPlayerWithLobbyId(socket, lobbyCode)
 		if (player) this.io.to(socket.id).emit("SELF", player)
 	}
 
-	findPlayer(socket, lobbyCode) {
+	findPlayerWithLobbyId(socket, lobbyCode) {
 		if (lobbyCode) {
 			const lobby = this.lobbies[lobbyCode]
-			return lobby.getPlayer(socket.id)
+			return lobby.getPlayerBySocketId(socket.id)
+		}
+		return null
+	}
+
+	findPlayerNoLobbyId(socket) {
+		if (socket) {
+			for (const lobbyCode in this.lobbies) {
+				const player = this.findPlayerWithLobbyId(socket, lobbyCode)
+				if (player) return { player, lobby: this.lobbies[lobbyCode] }
+			}
+		}
+		return null
+	}
+
+	playerUpdate(socket, data) {
+		const lobby = this.lobbies[data.lobbyCode]
+		if (lobby) {
+			lobby.playerUpdate(data.player).then(() => {
+				console.log(lobby)
+				this.sendPlayerDetails(socket)
+				this.updateLobby(lobby)
+			})
 		}
 	}
 }
