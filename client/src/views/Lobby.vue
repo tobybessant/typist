@@ -13,19 +13,20 @@
 			</div>
 			<button @click="toggleReady">READY</button>
 		</div>
-
-		<div v-if="gameStarted" class="gameView">
-			<h2>T Y P E !</h2>
-		</div>
+		<RouterButton label="Start" routeName="Game" :data="{ client }" />
 	</div>
 </template>
 
 <script>
 import io from "socket.io-client"
+import RouterButton from "../components/RouterButton"
 import Client from "../services/Client"
 
 export default {
 	name: "Lobby",
+	components: {
+		RouterButton
+	},
 	props: {
 		username: String,
 		lobbyId: String
@@ -43,6 +44,14 @@ export default {
 	methods: {
 		toggleReady() {
 			this.client.toggleReady()
+		},
+		startGame() {
+			this.gameStarted = true
+		}
+	},
+	computed: {
+		canStartGame: function() {
+			return this.client.lobby.players.filter(player => player.isReady).length === this.client.lobby.players.length
 		}
 	}
 }

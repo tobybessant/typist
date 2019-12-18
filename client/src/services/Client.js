@@ -60,5 +60,4 @@ export default class Client {
 	stateChange() {
 		this.socket.emit("PLAYER_STATE_UPDATE", { lobbyCode: this.lobby.code, player: this.details })
 	}
-
 }
