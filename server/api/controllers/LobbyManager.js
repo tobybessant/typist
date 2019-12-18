@@ -40,9 +40,15 @@ module.exports = class LobbyManager {
 		if (socket) {
 			const connection = this.findPlayerNoLobbyId(socket)
 			if (connection) {
+				const lobbyCode = connection.lobby.code
 				connection.lobby.leave(socket, connection.player)
-				this.updateLobby(connection.lobby)
+				if (connection.lobby.players.length > 0) {
+					this.updateLobby(connection.lobby)
+				} else {
+					delete this.lobbies[lobbyCode]
+				}
 			}
+			console.log(this.lobbies)
 		}
 	}
 
