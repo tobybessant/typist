@@ -1,4 +1,4 @@
-const fetch = require("node-fetch")
+var randomWords = require("random-words")
 const Player = require("./Player")
 const ID_LENGTH = 4
 
@@ -95,9 +95,7 @@ module.exports = class Lobby {
 		// eslint-disable-next-line no-async-promise-executor
 		return new Promise(async (resolve, reject) => {
 			try {
-				const response = await fetch("https://random-word-api.herokuapp.com/word?key=K4C8AYRU&number=40")
-				const paragraph = await response.json()
-				resolve(paragraph)
+				resolve(randomWords({ exactly: 15, maxLength: 5 }))
 			} catch (err) {
 				reject(err)
 			}
