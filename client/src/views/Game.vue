@@ -8,6 +8,7 @@
 
 			<div class="interface">
 				<h1>T Y P E! {{ client.details.username }}</h1>
+				<h2>Accuracy: {{ wordAccuracy }}</h2>
 				<div v-if="paragraph" class="paragraph">
 					<div class="word" v-for="(word, index) in paragraph"
 										v-bind:key="index"
@@ -41,6 +42,7 @@ export default {
 			countdown: 3,
 			currentWordIndex: 0,
 			currentWord: "",
+			correctWordCount: 0,
 			paragraph: [],
 			opponentPositions: []
 		}
@@ -116,12 +118,18 @@ export default {
 		updateWordView: function(state) {
 			this.paragraph[state.index].class = state.class
 			this.paragraph[state.index].typed = state.typed
+			if (state.class === "correct") ++this.correctWordCount
 		},
 		isOpponentPosition: function(index) {
 			for (let i = 0; i < this.client.lobby.players.length; i++) {
 				if (this.client.lobby.players[i].wordIndex === index && this.client.lobby.players[i].id !== this.client.details.id) return "opponent"
 			}
 			return ""
+		}
+	},
+	computed: {
+		wordAccuracy: function () {
+			return (this.correctWordCount ? Math.floor((this.correctWordCount / this.currentWordIndex * 100)) : 0) + "%"
 		}
 	}
 }
@@ -157,34 +165,49 @@ export default {
 }
 
 .paragraph {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  font-size: 16pt;
+	margin-bottom: 40px;
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	font-size: 25pt;
+	max-width: 700px;
 }
 
 .word {
-  margin: 0 1px;
-  padding: 3px 5px;
-  border-radius: 5px;
+	margin: 0 1px;
+	padding: 3px 5px;
+	border-radius: 5px;
+}
+
+input {
+	width: 40%;
+	height: 50px;
+	margin: 20px 0 60px 0;
+	padding: 0px 6px;
+	font-size: 1.6rem;
+	text-align: center;
+	border: none;
+	border-bottom: 1px solid black;
+	outline: none;
 }
 
 .next {
-  color: grey;
+	color: grey;
 }
 
 .correct {
-  color: black;
+	color: black;
 }
 
 .incorrect {
-  color: grey;
-  text-decoration: line-through;
+	color: grey;
+	text-decoration: line-through;
 }
 
 .current {
-  color: white;
-  background: black !important;
+	color: white;
+	background: black !important;
 }
 
 .opponent {

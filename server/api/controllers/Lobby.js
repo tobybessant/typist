@@ -95,7 +95,7 @@ module.exports = class Lobby {
 		// eslint-disable-next-line no-async-promise-executor
 		return new Promise(async (resolve, reject) => {
 			try {
-				const response = await fetch("https://random-word-api.herokuapp.com/word?key=K4C8AYRU&number=20")
+				const response = await fetch("https://random-word-api.herokuapp.com/word?key=K4C8AYRU&number=40")
 				const paragraph = await response.json()
 				resolve(paragraph)
 			} catch (err) {
