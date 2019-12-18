@@ -13,6 +13,7 @@ module.exports = class LobbyManager {
 		socket.on("JOIN_LOBBY", (data) => this.joinLobby(socket, data))
 		socket.on("REQUEST_SELF", (data) => this.sendPlayerDetails(socket, data))
 		socket.on("PLAYER_STATE_UPDATE", (data) => this.playerUpdate(socket, data))
+		socket.on("HOST_STARTED_GAME", (data) => this.startGame(socket, data))
 
 		socket.on("disconnect", (data) => this.leaveLobby(socket, data))
 	}
@@ -54,6 +55,15 @@ module.exports = class LobbyManager {
 		this.io.to(lobby.code).emit("STATE_UPDATE", { state })
 	}
 
+	async startGame(socket, data) {
+		if (data.lobbyCode) {
+			const lobby = this.lobbies[data.lobbyCode]
+			lobby.generateParagraph().then((paragraphWords) => {
+				this.io.to(data.lobbyCode).emit("START", { paragraphWords })
+			})
+		}
+	}
+
 	sendPlayerDetails(socket, lobbyCode) {
 		const player = this.findPlayerWithLobbyId(socket, lobbyCode)
 		if (player) this.io.to(socket.id).emit("SELF", player)
@@ -81,7 +91,6 @@ module.exports = class LobbyManager {
 		const lobby = this.lobbies[data.lobbyCode]
 		if (lobby) {
 			lobby.playerUpdate(data.player).then(() => {
-				console.log(lobby)
 				this.sendPlayerDetails(socket)
 				this.updateLobby(lobby)
 			})

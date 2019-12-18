@@ -1,3 +1,4 @@
+const fetch = require("node-fetch")
 const Player = require("./Player")
 const ID_LENGTH = 4
 
@@ -6,7 +7,7 @@ module.exports = class Lobby {
 		if (hostPlayer) {
 			this.code = this.generateCode()
 			this.players = []
-			this.paragraph = null
+			this.paragraph = []
 
 			this.join(socket, hostPlayer)
 		} else {
@@ -41,6 +42,7 @@ module.exports = class Lobby {
 			this.players.forEach((p) => {
 				if (p.id === player.id) {
 					p.isReady = player.isReady
+					p.wordIndex = player.wordIndex
 					resolve()
 				}
 			})
@@ -55,7 +57,8 @@ module.exports = class Lobby {
 				id: player.id,
 				socketId: player.socket.id,
 				username: player.username,
-				isReady: player.isReady
+				isReady: player.isReady,
+				wordIndex: player.wordIndex
 			})
 		})
 		return pl
@@ -69,7 +72,8 @@ module.exports = class Lobby {
 					id: player.id,
 					socketId: socketId,
 					username: player.username,
-					isReady: player.isReady
+					isReady: player.isReady,
+					wordIndex: player.wordIndex
 				}
 			}
 		}
@@ -85,5 +89,18 @@ module.exports = class Lobby {
 		}
 
 		return id
+	}
+
+	async generateParagraph() {
+		// eslint-disable-next-line no-async-promise-executor
+		return new Promise(async (resolve, reject) => {
+			try {
+				const response = await fetch("https://random-word-api.herokuapp.com/word?key=K4C8AYRU&number=20")
+				const paragraph = await response.json()
+				resolve(paragraph)
+			} catch (err) {
+				reject(err)
+			}
+		})
 	}
 }

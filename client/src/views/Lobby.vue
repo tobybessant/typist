@@ -13,20 +13,16 @@
 			</div>
 			<button @click="toggleReady">READY</button>
 		</div>
-		<RouterButton label="Start" routeName="Game" :data="{ client }" />
+		<button @click="startGame">Start</button>
 	</div>
 </template>
 
 <script>
 import io from "socket.io-client"
-import RouterButton from "../components/RouterButton"
 import Client from "../services/Client"
 
 export default {
 	name: "Lobby",
-	components: {
-		RouterButton
-	},
 	props: {
 		username: String,
 		lobbyId: String
@@ -39,14 +35,14 @@ export default {
 	},
 	async mounted() {
 		const socket = await io.connect(":9000")
-		this.client = new Client(socket, this.username, this.lobbyId)
+		this.client = new Client(socket, this.$router, this.username, this.lobbyId)
 	},
 	methods: {
 		toggleReady() {
 			this.client.toggleReady()
 		},
 		startGame() {
-			this.gameStarted = true
+			this.client.startGame()
 		}
 	},
 	computed: {

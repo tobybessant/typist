@@ -1,6 +1,7 @@
 export default class Client {
-	constructor(socket, username, lobbyCode) {
+	constructor(socket, router, username, lobbyCode) {
 		this.socket = socket
+		this.router = router
 		this.details = {}
 
 		this.lobby = {
@@ -17,6 +18,7 @@ export default class Client {
 		const c = this
 
 		this.socket.on("STATE_UPDATE", (state) => this.updateState(c, state))
+		this.socket.on("START", (state) => this.gameStarted(c, state))
 		this.socket.on("SELF", (player) => this.setPlayer(c, player))
 
 		this.socket.on("disconnect", () => this.leaveLobby(c))
@@ -57,7 +59,16 @@ export default class Client {
 		this.stateChange()
 	}
 
+	startGame() {
+		this.socket.emit("HOST_STARTED_GAME", { lobbyCode: this.lobby.code })
+	}
+
+	gameStarted(client, data) {
+		this.router.push({ name: "Game", params: { client, paragraphWords: data.paragraphWords } })
+	}
+
 	stateChange() {
+		console.log("EMITTING STATECHCANGE", this.details.wordIndex)
 		this.socket.emit("PLAYER_STATE_UPDATE", { lobbyCode: this.lobby.code, player: this.details })
 	}
 }

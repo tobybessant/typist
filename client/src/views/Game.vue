@@ -8,10 +8,10 @@
 
 			<div class="interface">
 				<h1>T Y P E! {{ client.details.username }}</h1>
-				<div class="paragraph">
+				<div v-if="paragraph" class="paragraph">
 					<div class="word" v-for="(word, index) in paragraph"
 										v-bind:key="index"
-										v-bind:class=[word.class]>
+										v-bind:class="[word.class, isOpponentPosition(index)]">
 										{{ word.text }}
 										</div>
 				</div>
@@ -28,37 +28,12 @@
 
 <script>
 import wordWorkerSourceCode from "../services/WordServiceWorker"
-const WORDS = [
-	"the",
-	"of",
-	"and",
-	"to",
-	"had",
-	"list",
-	"name",
-	"just",
-	"over",
-	"state",
-	"year",
-	"day",
-	"into",
-	"games",
-	"way",
-	"days",
-	"part",
-	"could",
-	"great",
-	"united",
-	"hotel",
-	"real",
-	"item",
-	"center"
-]
 
 export default {
 	name: "Game",
 	props: {
-		client: null
+		client: null,
+		paragraphWords: Array
 	},
 	data: () => {
 		return {
@@ -66,42 +41,34 @@ export default {
 			countdown: 3,
 			currentWordIndex: 0,
 			currentWord: "",
-			paragraph: []
+			paragraph: [],
+			opponentPositions: []
 		}
-	},
-	created() {
 	},
 	async mounted() {
 		this.wordWorker = new Worker(wordWorkerSourceCode)
 		this.wordWorker.onmessage = (m) => this.handleWordServiceWorker(m)
 
-		this.start()
+		this.buildParahgraphView()
+		this.startCountdown()
 		this.focusInput()
 	},
 	methods: {
-		start: function() {
-			let wordsStore = WORDS.splice(0)
-			for (let i = 0; i < 10; i++) {
-				let randomWordIndex = Math.floor(
-					Math.random() * (wordsStore.length - 1)
-				)
+		buildParahgraphView: function() {
+			for (let i = 0; i < this.paragraphWords.length; i++) {
 				if (i === 0) {
 					this.paragraph.push({
-						text: wordsStore[randomWordIndex],
+						text: this.paragraphWords[i],
 						class: "current"
 					})
-					wordsStore.splice(randomWordIndex, 1)
 					continue
 				}
 
 				this.paragraph.push({
-					text: wordsStore[randomWordIndex],
+					text: this.paragraphWords[i],
 					class: "next"
 				})
-				wordsStore.splice(randomWordIndex, 1)
 			}
-
-			this.startCountdown()
 		},
 		startCountdown: function() {
 			if (this.countdown > 0) {
@@ -139,15 +106,22 @@ export default {
 				switch (message.data.operation) {
 				case "PROCESS_WORD":
 					this.updateWordView(message.data.result)
+					this.client.details.wordIndex = (message.data.result.index + 1)
+					this.client.stateChange()
 				}
 			} else {
 				console.error(message.data.error)
 			}
 		},
 		updateWordView: function(state) {
-			console.log(JSON.stringify(state))
 			this.paragraph[state.index].class = state.class
 			this.paragraph[state.index].typed = state.typed
+		},
+		isOpponentPosition: function(index) {
+			for (let i = 0; i < this.client.lobby.players.length; i++) {
+				if (this.client.lobby.players[i].wordIndex === index && this.client.lobby.players[i].id !== this.client.details.id) return "opponent"
+			}
+			return ""
 		}
 	}
 }
@@ -210,6 +184,10 @@ export default {
 
 .current {
   color: white;
-  background: black;
+  background: black !important;
+}
+
+.opponent {
+	background: #FFDAC1
 }
 </style>

@@ -6,6 +6,7 @@ module.exports = class Player {
 			this.socket = socket
 			this.username = username
 			this.isReady = false
+			this.wordIndex = 0
 			this.id = UUID()
 		} else {
 			throw new Error("Invalid username")

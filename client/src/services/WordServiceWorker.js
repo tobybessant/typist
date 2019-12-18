@@ -1,7 +1,6 @@
 const workerSource = () => {
 	const processWord = (typed, actual, index) => {
 		const result = {}
-		console.log(typed, actual)
 		result.typed = typed
 		result.class = typed === actual ? "correct" : "incorrect"
 		result.index = index

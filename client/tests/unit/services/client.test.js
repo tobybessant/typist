@@ -6,7 +6,7 @@ import Client from "../../../src/services/Client"
 
 describe("Client service", () => {
 	// eslint-disable-next-line no-unused-vars
-	let socket, username, lobbyCode, client
+	let socket, router, username, lobbyCode, client
 
 	beforeEach(() => {
 		socket = Spy()
@@ -16,6 +16,7 @@ describe("Client service", () => {
 
 	afterEach(() => {
 		socket = null
+		router = null
 		username = null
 		lobbyCode = null
 	})
@@ -24,7 +25,7 @@ describe("Client service", () => {
 		beforeEach(() => {
 			username = "Toby"
 			lobbyCode = "HASN"
-			client = new Client(socket, username, lobbyCode)
+			client = new Client(socket, router, username, lobbyCode)
 		})
 
 		it("Registers 'STATE_UPDATE' event handler", () => {
@@ -125,7 +126,7 @@ describe("Client service", () => {
 
 		beforeEach(() => {
 			username = "Toby"
-			client = new Client(socket, username, lobbyCode)
+			client = new Client(socket, router, username, lobbyCode)
 		})
 
 		describe("Creates a lobby when the lobby code is falsy", () => {
@@ -181,7 +182,7 @@ describe("Client service", () => {
 		beforeEach(() => {
 			username = "Toby"
 			lobbyCode = "HASN"
-			client = new Client(socket, username, lobbyCode)
+			client = new Client(socket, router, username, lobbyCode)
 
 			socket.reset()
 		})
