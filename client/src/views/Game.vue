@@ -127,7 +127,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .game-container {
 	width: 100%;
 	padding: 0;
