@@ -48,7 +48,6 @@ module.exports = class LobbyManager {
 					delete this.lobbies[lobbyCode]
 				}
 			}
-			console.log(this.lobbies)
 		}
 	}
 
