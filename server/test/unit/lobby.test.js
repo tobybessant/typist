@@ -28,7 +28,7 @@ suite("Unit Tests :: Lobby\n", () => {
 			})
 
 			test("Sets the host", async () => {
-				assert.propertyVal(lobby, "host", host, "Host name not set correctly")
+				assert.propertyVal(lobby.host, "username", host, "Host name not set correctly")
 			})
 
 			test("The players array is initialised as empty", () => {

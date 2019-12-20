@@ -1,4 +1,4 @@
-module.exports = class MockGameModel {
+module.exports = class MongooseModel {
 
 	constructor(properties) {
 		this.properties = properties
