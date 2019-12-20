@@ -7,7 +7,6 @@ describe("Button component", () => {
 
 	beforeEach(() => {
 		label = "Home"
-		route = "/home"
 		wrapper = shallowMount(Button, {
 			propsData: {
 				label,
@@ -22,10 +21,6 @@ describe("Button component", () => {
 
 	it("Should have a label value", () => {
 		expect(wrapper.props().label).to.equal(label)
-	})
-
-	it("Should have a route value", () => {
-		expect(wrapper.props().route).to.equal(route)
 	})
 
 	it("Should have a 'button' class", () => {

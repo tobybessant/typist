@@ -42,7 +42,7 @@ describe("NewGame View", () => {
 	})
 
 	it("Has 2 router buttons", () => {
-		const routerButton = /<routerbutton.*?<\/routerbutton.*?>/g
+		const routerButton = /<button.*?<\/button.*?>/g
 		expect((wrapper.html().match(routerButton) || []).length).to.equal(2)
 	})
 })

@@ -251,7 +251,7 @@ suite("Unit Tests :: Lobby Manager", () => {
 		})
 	})
 
-	suite("Leave lobby removes the socket from a room and updates the rest of the room with the new state", () => {
+	suite("Disconnecting from lobby removes the socket from a room and updates the rest of the room with the new state", () => {
 		setup(() => {
 			io = Spy()
 				.onMethod("emit")
@@ -283,7 +283,7 @@ suite("Unit Tests :: Lobby Manager", () => {
 			io.reset()
 			socket.reset()
 
-			lobbyManager.leaveLobby(socketB)
+			lobbyManager.playerDisconnected(socketB)
 		})
 
 		test("socket.disconnect() was called once", () => {

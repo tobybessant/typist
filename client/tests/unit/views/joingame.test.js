@@ -46,8 +46,8 @@ describe("JoinGame View", () => {
 		expect((wrapper.html().match(inputFieldText) || []).length).to.equal(1)
 	})
 
-	it("Has 2 router buttons", () => {
-		const routerButton = /<routerbutton.*?<\/routerbutton.*?>/g
+	it("Has 2 buttons", () => {
+		const routerButton = /<button.*?<\/button.*?>/g
 		expect((wrapper.html().match(routerButton) || []).length).to.equal(2)
 	})
 })

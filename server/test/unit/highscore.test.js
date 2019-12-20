@@ -16,10 +16,12 @@ suite("Unit Tests :: Highscore Controller\n", () => {
 			// setup mock model with a valid name property
 			const username = "Name!"
 			const displayTime = "00:34:938"
+			const accuracy = "54%"
+			const wpm = "45"
 			highscoreController = new HighscoreController(MockHighscoreModel)
 
 			// setup mock request and response
-			req = new MockRequest({ username: username, displayTime })
+			req = new MockRequest({ username, displayTime, accuracy, wpm })
 			res = new MockResponse()
 		})
 
