@@ -6,9 +6,17 @@ module.exports = class Lobby {
 	constructor(socket, hostPlayer) {
 		if (hostPlayer) {
 			this.code = this.generateCode()
+
+			this.availableCols = [
+				"rgba(67,197,158,0.5)",
+				"rgba(87,190,255,0.5)",
+				"rgba(249,185,242,0.5)",
+				"rgba(255, 188, 107, 0.5)",
+				"rgba(227, 84, 96, 0.5)"
+			]
+
 			this.players = []
 			this.paragraph = []
-
 			this.join(socket, hostPlayer)
 		} else {
 			throw new Error("Null host exception")
@@ -19,9 +27,10 @@ module.exports = class Lobby {
 		if (username) {
 			socket.join(this.code)
 			const player = new Player(socket, username)
+			this.assignColour(player)
 			this.players.push(player)
 			if (this.players.length === 1) {
-				this.host = player.username
+				this.host = { username: player.username, id: player.id }
 			}
 		} else {
 			throw new Error("Null player exception")
@@ -34,6 +43,10 @@ module.exports = class Lobby {
 			this.players = this.players.filter((p) => {
 				return p.id !== player.id
 			})
+			if (player.id === this.host.id && this.players.length >= 1) {
+				const newHost = this.players[0]
+				this.host = { username: newHost.username, id: newHost.id }
+			}
 		}
 	}
 
@@ -41,8 +54,9 @@ module.exports = class Lobby {
 		return new Promise((resolve, reject) => {
 			this.players.forEach((p) => {
 				if (p.id === player.id) {
-					p.isReady = player.isReady
-					p.wordIndex = player.wordIndex
+					for (const property in player) {
+						p[property] = player[property]
+					}
 					resolve()
 				}
 			})
@@ -53,31 +67,35 @@ module.exports = class Lobby {
 	getPlayerList() {
 		const pl = []
 		this.players.forEach((player) => {
-			pl.push({
-				id: player.id,
+			const playerNoSocket = {
 				socketId: player.socket.id,
-				username: player.username,
-				isReady: player.isReady,
-				wordIndex: player.wordIndex
-			})
+				...player
+			}
+			delete playerNoSocket.socket
+			pl.push(playerNoSocket)
 		})
-		return pl
+		return pl.sort((playerA, playerB) => {
+			return playerB.wpm - playerA.wpm
+		})
 	}
 
 	getPlayerBySocketId(socketId) {
 		for (let i = 0; i < this.players.length; i++) {
 			const player = this.players[i]
 			if (player.socket.id === socketId) {
-				return {
-					id: player.id,
-					socketId: socketId,
-					username: player.username,
-					isReady: player.isReady,
-					wordIndex: player.wordIndex
-				}
+				const playerNoSocket = { ...player }
+				delete playerNoSocket.socket
+				return playerNoSocket
 			}
 		}
 		return null
+	}
+
+	checkGameOver() {
+		if (this.players.filter(p => p.finished).length === this.players.length) {
+			return true
+		}
+		return false
 	}
 
 	generateCode() {
@@ -91,14 +109,19 @@ module.exports = class Lobby {
 		return id
 	}
 
-	async generateParagraph() {
-		// eslint-disable-next-line no-async-promise-executor
-		return new Promise(async (resolve, reject) => {
+	generateParagraph() {
+		return new Promise((resolve, reject) => {
 			try {
-				resolve(randomWords({ exactly: 15, maxLength: 5 }))
+				resolve(randomWords({ exactly: 30, maxLength: 5 }))
 			} catch (err) {
 				reject(err)
 			}
 		})
+	}
+
+	assignColour(player) {
+		const randomColourIndex = Math.floor(Math.random() * this.availableCols.length)
+		player.setColour(this.availableCols[randomColourIndex])
+		this.availableCols.splice(randomColourIndex, 1)
 	}
 }

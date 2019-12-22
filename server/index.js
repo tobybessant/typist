@@ -30,6 +30,7 @@ const PORT = process.env.PORT || 3000
 const DB_STRING = process.env["DB_STRING_" + process.env.NODE_ENV]
 
 // app config
+app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 if (process.env.NODE_ENV === "development") {
 	app.use(cors())

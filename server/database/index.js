@@ -4,7 +4,8 @@ const options = { useNewUrlParser: true, useUnifiedTopology: true }
 const MongoMemoryServer = require("mongodb-memory-server").MongoMemoryServer
 
 const TABLE_NAMES = {
-	GAMES: "games"
+	GAMES: "games",
+	HIGHSCORES: "highscores"
 }
 
 module.exports = {

@@ -7,13 +7,17 @@ module.exports = class GameController {
 
 	// adds new game to database provided a valid name is received
 	async save(req, res) {
-		console.log(req.body)
 		// check name is present in request
 		const username = req.body.username
 		const time = req.body.displayTime
 		const wpm = req.body.wpm
 		const accuracy = req.body.accuracy
-		if (!username || !time || !wpm || !accuracy) {
+
+		if (username === "" || username === undefined ||
+			time === "" || time === undefined ||
+			wpm === "" || time === undefined ||
+			accuracy === "" || accuracy === undefined) {
+
 			// if no name is present in payload return 400
 			const error = "Malformed request"
 			res.status(400).json({ error })

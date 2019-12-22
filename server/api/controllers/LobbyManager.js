@@ -15,7 +15,8 @@ module.exports = class LobbyManager {
 		socket.on("PLAYER_STATE_UPDATE", (data) => this.playerUpdate(socket, data))
 		socket.on("HOST_STARTED_GAME", (data) => this.startGame(socket, data))
 
-		socket.on("disconnect", (data) => this.leaveLobby(socket, data))
+		socket.on("disconnect", (data) => this.playerDisconnected(socket, data))
+		socket.on("LEAVE_LOBBY", (data) => this.leaveLobby(socket, data))
 	}
 
 	createLobby(socket, data) {
@@ -36,7 +37,11 @@ module.exports = class LobbyManager {
 		}
 	}
 
-	leaveLobby(socket) {
+	leaveLobby(socket, data) {
+		this.lobbies[data.lobbyId].leave(socket, { player: { id: data.playerId } })
+	}
+
+	playerDisconnected(socket) {
 		if (socket) {
 			const connection = this.findPlayerNoLobbyId(socket)
 			if (connection) {
@@ -55,7 +60,8 @@ module.exports = class LobbyManager {
 		const state = {
 			players: lobby.getPlayerList(),
 			host: lobby.host,
-			code: lobby.code
+			code: lobby.code,
+			gameOver: lobby.checkGameOver()
 		}
 		this.io.to(lobby.code).emit("STATE_UPDATE", { state })
 	}
