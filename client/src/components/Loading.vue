@@ -1,18 +1,17 @@
 <template>
-  <h1>Typist<span class="blinking-caret">|</span></h1>
+  <div>{{ text }}<span class="blinking-caret">|</span></div>
 </template>
 
 <script>
 export default {
-	name: "AppHeading"
+	name: "Loading",
+	props: {
+		text: String
+	}
 }
 </script>
 
-<style scoped>
-h1 {
-	font-size: 5.0em;
-}
-
+<style>
 .blinking-caret {
   font-weight: 100;
   font-size: 5rem;

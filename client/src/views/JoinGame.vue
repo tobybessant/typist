@@ -1,25 +1,33 @@
 <template>
 	<div class="container">
 		<h1>Join Game</h1>
-		<input v-model="username" type="text" id="username" placeholder="Enter Username">
-		<input v-model="lobbyId" type="text" id="lobbyId" placeholder="Enter Lobby Code">
-		<RouterButton label="Join" routeName="lobby" :data="{ username, lobbyId }"/>
-		<RouterButton label="Cancel" routeName="home" />
+		<input v-model="lobbyId" type="text" id="lobbyId" placeholder="Enter Lobby Code" autocomplete="off">
+		<input v-model="username" type="text" id="username" placeholder="Enter Username" autocomplete="off">
+		<Button label="Join" @buttonClick="joinGame" />
+		<Button label="Cancel" @buttonClick="home" />
 	</div>
 </template>
 
 <script>
-import RouterButton from "../components/RouterButton.vue"
+import Button from "../components/Button.vue"
 
 export default {
 	name: "JoinGame",
 	components: {
-		RouterButton
+		Button
 	},
 	data: () => {
 		return {
 			username: "",
 			lobbyId: ""
+		}
+	},
+	methods: {
+		joinGame: function() {
+			this.$router.push({ name: "lobby", params: { username: this.username, lobbyId: this.lobbyId } })
+		},
+		home: function() {
+			this.$router.push({ name: "home" })
 		}
 	}
 }
@@ -44,6 +52,7 @@ input {
 	text-align: center;
 	border: none;
 	border-bottom: 1px solid lightgrey;
+	font-family: "EB Garamond", serif;
 	outline: none;
 }
 

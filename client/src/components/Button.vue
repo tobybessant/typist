@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<button>
+		<button @click="emitClickedEvent" v-bind:style="css">
 			{{ label }}
 		</button>
 	</div>
@@ -8,10 +8,16 @@
 
 <script>
 export default {
-	name: "RouterButton",
+	name: "Button",
 	props: {
 		label: String,
-		route: String
+		handler: null,
+		css: {}
+	},
+	methods: {
+		emitClickedEvent() {
+			this.$emit("buttonClick")
+		}
 	}
 }
 </script>
@@ -28,17 +34,21 @@ export default {
 		border-radius: 0.12em;
 		box-sizing: border-box;
 		text-decoration: none;
-		font-family: 'Roboto', sans-serif;
-		font-size: 1.2rem;
+		font-size: 1.5rem;
 		font-weight: 300;
 		color: #000000;
 		text-align: center;
 		transition: all 0.2s;
+		font-family: "EB Garamond", serif;
 	}
 
 	button:hover {
 		color: #FFFFFF;
 		background-color: #000000;
 		cursor: pointer;
+	}
+
+	button:focus {
+		outline: none;
 	}
 </style>

@@ -1,3 +1,4 @@
+
 export default class Client {
 	constructor(socket, router, username, lobbyCode) {
 		this.socket = socket
@@ -7,7 +8,8 @@ export default class Client {
 		this.lobby = {
 			code: "",
 			host: "",
-			players: []
+			players: [],
+			gameOver: false
 		}
 
 		this.handleEvents()
@@ -20,8 +22,7 @@ export default class Client {
 		this.socket.on("STATE_UPDATE", (state) => this.updateState(c, state))
 		this.socket.on("START", (state) => this.gameStarted(c, state))
 		this.socket.on("SELF", (player) => this.setPlayer(c, player))
-
-		this.socket.on("disconnect", () => this.leaveLobby(c))
+		this.socket.on("GAME_OVER", () => { this.lobby.gameOver = true })
 	}
 
 	setPlayer(client, player) {
@@ -29,9 +30,7 @@ export default class Client {
 	}
 
 	updateState(client, data) {
-		client.lobby.host = data.state.host
-		client.lobby.code = data.state.code
-		client.lobby.players = data.state.players
+		client.lobby = { ...data.state }
 	}
 
 	setupLobby(username, lobbyCode) {
@@ -50,8 +49,9 @@ export default class Client {
 		this.socket.emit("JOIN_LOBBY", { username, lobbyId: lobbyCode })
 	}
 
-	leaveLobby(client) {
-		this.socket.emit("DISCONNECT", { client })
+	leaveLobby() {
+		this.router.push({ name: "home" })
+		this.socket.emit("LEAVE_LOBBY", { playerId: this.details.id, lobbyId: this.lobby.code })
 	}
 
 	toggleReady() {
@@ -64,10 +64,32 @@ export default class Client {
 	}
 
 	gameStarted(client, data) {
-		this.router.push({ name: "Game", params: { client, paragraphWords: data.paragraphWords } })
+		this.refreshClientStats()
+		this.router.push({ name: "game", params: { client, paragraphWords: data.paragraphWords } })
+	}
+
+	returnToLobby() {
+		this.router.push({ name: "lobby", params: { existingClientData: this } })
 	}
 
 	stateChange() {
 		this.socket.emit("PLAYER_STATE_UPDATE", { lobbyCode: this.lobby.code, player: this.details })
+	}
+
+	finish() {
+		this.details.finished = true
+		this.stateChange()
+	}
+
+	refreshClientStats() {
+		this.details.isReady = false
+		this.details.finished = false
+		this.details.wordIndex = 0
+		this.details.correctWordCount = 0
+		this.details.time = -9999999
+		this.details.displayTime = ""
+		this.details.wordAccuracy = ""
+		this.details.wpm = ""
+		this.stateChange()
 	}
 }

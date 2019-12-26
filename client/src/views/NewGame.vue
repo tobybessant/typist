@@ -1,25 +1,33 @@
 <template>
 	<div class="container">
 		<h1>New Game</h1>
-		<input v-model="username" type="text" id="gameName" placeholder="Enter Username">
+		<input v-model="username" type="text" id="gameName" placeholder="Enter Username" autocomplete="off">
 		<div class="buttons">
-			<RouterButton label="Continue" routeName="lobby" :data="{ username }" />
-			<RouterButton label="Cancel" routeName="home" />
+			<Button label="Continue" @buttonClick="createGame" />
+			<Button label="Cancel" @buttonClick="goHome" />
 		</div>
 	</div>
 </template>
 
 <script>
-import RouterButton from "../components/RouterButton.vue"
+import Button from "../components/Button.vue"
 
 export default {
 	name: "NewGame",
 	components: {
-		RouterButton
+		Button
 	},
 	data: () => {
 		return {
 			username: ""
+		}
+	},
+	methods: {
+		createGame: function() {
+			this.$router.push({ name: "lobby", params: { username: this.username } })
+		},
+		goHome: function() {
+			this.$router.push({ name: "home" })
 		}
 	}
 }
@@ -45,6 +53,7 @@ input {
 	border: none;
 	border-bottom: 1px solid lightgrey;
 	outline: none;
+	font-family: "EB Garamond", serif;
 }
 
 input:hover {
