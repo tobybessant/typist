@@ -12,7 +12,7 @@ pool:
 
 steps:
 - task: UseNode@1
-    inputs:
+inputs:
     version: '11.6'
 
 - task: Npm@1
