@@ -4,30 +4,46 @@
 # https://aka.ms/yaml
 
 trigger:
-- develop
-- master
-
+    - develop
+    - master
+    
 pool:
-  vmImage: 'ubuntu-latest'
+    vmImage: 'ubuntu-latest'
 
 steps:
 - task: UseNode@1
-  inputs:
+    inputs:
     version: '11.6'
 
 - task: Npm@1
-  inputs:
+    name: 'Server_Startup'
+    inputs:
     command: 'install'
     workingDir: 'server'
 
 - task: Npm@1
-  inputs:
+    name: 'Server_Test_Unit'
+    inputs:
     command: 'custom'
     workingDir: 'server'
     customCommand: 'run test:unit'
 
 - task: Npm@1
-  inputs:
+    name: 'Server_Test_Integration'
+    inputs:
     command: 'custom'
     workingDir: 'server'
     customCommand: 'run test:integration -- --DB_STRING_test=$(TEST_DB_STRING)'
+
+- task: Npm@1
+    name: 'Client_Startup'
+    inputs:
+    command: 'install'
+    workingDir: 'client'
+
+- task: Npm@1
+    name: 'Client_Test_Unit'
+    inputs:
+    command: 'custom'
+    workingDir: 'client'
+    customCommand: 'run test'
