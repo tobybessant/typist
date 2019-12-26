@@ -16,33 +16,33 @@ steps:
     version: '11.6'
 
 - task: Npm@1
-    name: 'Server_Startup'
+    displayName: 'Server_Startup'
     inputs:
     command: 'install'
     workingDir: 'server'
 
 - task: Npm@1
-    name: 'Server_Test_Unit'
+    displayName: 'Server_Test_Unit'
     inputs:
     command: 'custom'
     workingDir: 'server'
     customCommand: 'run test:unit'
 
 - task: Npm@1
-    name: 'Server_Test_Integration'
+    displayName: 'Server_Test_Integration'
     inputs:
     command: 'custom'
     workingDir: 'server'
     customCommand: 'run test:integration -- --DB_STRING_test=$(TEST_DB_STRING)'
 
 - task: Npm@1
-    name: 'Client_Startup'
+    displayName: 'Client_Startup'
     inputs:
     command: 'install'
     workingDir: 'client'
 
 - task: Npm@1
-    name: 'Client_Test_Unit'
+    displayName: 'Client_Test_Unit'
     inputs:
     command: 'custom'
     workingDir: 'client'
