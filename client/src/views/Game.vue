@@ -22,7 +22,10 @@
 				v-model="currentWord"
 				v-on:keyup.space="submitTypedWord" autocomplete="off"/>
 
-				<div v-if="client.details.finished && !client.lobby.gameOver">Waiting for other players to finish...</div>
+				<div v-if="client.details.finished && !client.lobby.gameOver">
+					<h3>Waiting for other players.</h3>
+					<PlayerGame :player="client.details"/>
+				</div>
 
 				<div v-if="client.lobby.gameOver" class="leaderboard">
 					<div class="table-title">
@@ -147,7 +150,6 @@ export default {
 			} else {
 				this.currentWordIndex++
 				this.client.details.correctWordCount = this.correctWordCount
-				this.$refs.stopwatch.stop()
 				this.client.details.time = this.$refs.stopwatch.getScoreValue()
 				this.client.details.displayTime = this.$refs.stopwatch.getDisplayValue()
 				this.client.details.wordAccuracy = this.wordAccuracy
