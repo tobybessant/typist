@@ -62,7 +62,7 @@
 <script>
 import axios from "axios"
 import HighscoreService from "../services/HighscoreService"
-import wordWorkerSourceCode from "../services/WordServiceWorker"
+import wordWorkerSourceCode from "../services/WordWorker"
 import Stopwatch from "../components/Stopwatch"
 import Button from "../components/Button"
 import PlayerGame from "../components/PlayerGame"
