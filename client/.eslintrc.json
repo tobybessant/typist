@@ -1,0 +1,31 @@
+{
+  "root": true,
+  "env": {
+    "node": true
+  },
+  "extends": [
+    "standard",
+    "plugin:vue/essential",
+    "@vue/standard"
+  ],
+  "rules": {
+    "quotes": ["error", "double"],
+    "indent": ["error", "tab"],
+    "space-before-function-paren": 0,
+    "no-tabs": 0,
+    "padded-blocks": 0
+  },
+  "parserOptions": {
+    "parser": "babel-eslint"
+  },
+  "overrides": [
+    {
+      "files": [
+          "tests/**/*.test.js"
+      ],
+      "env": {
+          "mocha": true
+      }
+  }
+  ]
+}
