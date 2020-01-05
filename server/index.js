@@ -26,14 +26,14 @@ process.argv.forEach(function (arg) {
 })
 
 // set port and fetch appropriate db string
-const PORT = process.env.PORT || 3000
+const PORT = process.env.PORT || 9000
 const DB_STRING = process.env["DB_STRING_" + process.env.NODE_ENV]
 
 // app config
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
+app.use(cors())
 if (process.env.NODE_ENV === "development") {
-	app.use(cors())
 	app.use(morgan("dev"))
 }
 
