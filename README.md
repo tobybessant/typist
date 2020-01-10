@@ -21,6 +21,9 @@ cd server
 # install dependencies
 npm install
 
+# install nodemon globally
+npm install nodemon -g
+
 # start with hot reload at localhost:3000
 npm run dev
 
