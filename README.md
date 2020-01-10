@@ -33,6 +33,9 @@ cd client
 # install dependencies
 npm install
 
+# install vue-cli
+npm install -g @vue/cli
+
 # start with hot reload at localhost:8080
 npm run serve
 ```
