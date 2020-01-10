@@ -23,7 +23,6 @@ export default {
 	mounted() {
 		this.playerStyle = {
 			background: `linear-gradient(297deg, #FFFFFF, ${this.player.colour})`
-			// borderLeft: `10px solid ${this.player.colour}`
 		}
 	},
 	computed: {

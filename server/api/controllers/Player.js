@@ -2,6 +2,7 @@ const UUID = require("uuid/v1")
 
 module.exports = class Player {
 	constructor(socket, username) {
+		// initialise player properties
 		if (username) {
 			this.socket = socket
 			this.username = username

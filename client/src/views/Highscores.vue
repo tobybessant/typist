@@ -38,6 +38,7 @@ export default {
 		}
 	},
 	async mounted() {
+		// fetch highscores from database
 		this.highscoreService = new HighscoreService(axios)
 		this.scores = await this.highscoreService.fetchAll()
 	},

@@ -96,17 +96,27 @@ export default {
 		}
 	},
 	async mounted() {
+		// initialise new worker to use for comparing user input
 		this.wordWorker = new Worker(wordWorkerSourceCode)
+
+		// register response handlier for worker messages
 		this.wordWorker.onmessage = (m) => this.handleWordServiceWorker(m)
 
+		// setup paragraph view
 		this.buildParahgraphView()
+
+		// display countdown screen
 		this.startCountdown()
-		this.focusInput()
+
+		// focus browser to input field so user can type immediately
+		this.disableInput()
 	},
 	methods: {
 		buildParahgraphView: function() {
+			// build paragraph array, assigning classes to be bound to view nodes
 			for (let i = 0; i < this.paragraphWords.length; i++) {
 				if (i === 0) {
+					// assign 'current' class to first word i array
 					this.paragraph.push({
 						text: this.paragraphWords[i],
 						class: "current"
@@ -114,6 +124,7 @@ export default {
 					continue
 				}
 
+				// remianing words are 'next'
 				this.paragraph.push({
 					text: this.paragraphWords[i],
 					class: "next"
@@ -121,21 +132,24 @@ export default {
 			}
 		},
 		startCountdown: function() {
+			// recursively tick timer down by 1 every second, until it reaches 0
 			if (this.countdown > 0) {
 				setTimeout(() => {
 					this.countdown -= 1
 					this.startCountdown()
 				}, 1000)
 			} else {
+				// enable field, focus input, and start game stopwatch
 				this.$refs.inputField.disabled = false
 				this.$refs.inputField.focus()
 				this.$refs.stopwatch.start()
 			}
 		},
-		focusInput: function() {
+		disableInput: function() {
 			this.$refs.inputField.disabled = true
 		},
 		submitTypedWord: function() {
+			// send typed word data to worker
 			this.wordWorker.postMessage({
 				operation: "PROCESS_WORD",
 				typedValue: this.currentWord.trim(),
@@ -143,11 +157,14 @@ export default {
 				correctValueIndex: this.currentWordIndex
 			})
 
+			// clear out input field
 			this.currentWord = ""
 
+			// if words are left then update current word index
 			if (this.currentWordIndex + 1 < this.paragraph.length) {
 				this.paragraph[++this.currentWordIndex].class = "current"
 			} else {
+				// if player has reached the end then save their scores and statistics
 				this.currentWordIndex++
 				this.client.details.correctWordCount = this.correctWordCount
 				this.client.details.time = this.$refs.stopwatch.getScoreValue()
@@ -159,9 +176,13 @@ export default {
 		},
 		handleWordServiceWorker: function(message) {
 			if (!message.data.error) {
+				// switch on operation
 				switch (message.data.operation) {
 				case "PROCESS_WORD":
+					// update word view with result
 					this.updateWordView(message.data.result)
+
+					// update the clients current word index and send new state to websocket server
 					this.client.details.wordIndex = (message.data.result.index + 1)
 					this.client.stateChange()
 				}
@@ -170,15 +191,20 @@ export default {
 			}
 		},
 		updateWordView: function(state) {
+			// set word at index provided by state to new state's properties
 			this.paragraph[state.index].class = state.class
 			this.paragraph[state.index].typed = state.typed
+
+			// if the word was typed correctly, update correctWordCount
 			if (state.class === "correct") {
 				this.client.details.correctWordCount = ++this.correctWordCount
 			}
 		},
 		isOpponentPosition: function(index) {
+			// check opponent positions and update word at that index with their respective colour
 			for (let i = 0; i < this.client.lobby.players.length; i++) {
 				if (this.client.lobby.players[i].wordIndex === index && this.client.lobby.players[i].id !== this.client.details.id) {
+					// return style object to apply opponents colour to word background
 					return {
 						background: this.client.lobby.players[i].colour
 					}
@@ -190,7 +216,10 @@ export default {
 			this.client.returnToLobby()
 		},
 		postHighscore: async function() {
+			// if no highscore service exists, create one and save it
 			if (!this.highscoreService) { this.highscoreService = new HighscoreService(axios) }
+
+			// send highscore data to mongo
 			const score = {
 				username: this.client.details.username,
 				displayTime: this.client.details.displayTime,
@@ -198,6 +227,8 @@ export default {
 				accuracy: this.client.details.wordAccuracy
 			}
 			const result = await this.highscoreService.save(score)
+
+			// print result to screen
 			if (result.error) {
 				this.highscoreResultMessage = result.error
 			} else {
@@ -208,9 +239,11 @@ export default {
 	},
 	computed: {
 		wordAccuracy: function () {
+			// calculate word accuracy percentage
 			return (this.correctWordCount ? Math.floor((this.correctWordCount / this.currentWordIndex * 100)) : 0) + "%"
 		},
 		wpm: function() {
+			// calculate wpm using total minuntes in decimal and correct word count
 			const decimalMinutes = Math.round((this.$refs.stopwatch.getScoreValue() / 60) * 10) / 10
 			return Math.floor(this.correctWordCount / decimalMinutes)
 		}

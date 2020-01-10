@@ -85,9 +85,12 @@ export default {
 		}
 	},
 	async mounted() {
+		// if no existing client data is present (for players returning from finished game) create new client object
 		if (!this.existingClientData) {
+			// connect to server websocket
 			const socket = await io.connect(":9000")
 			if (this.username) {
+				// create new client with required data / dependencies
 				this.client = new Client(socket, this.$router, this.username, this.lobbyId)
 			} else {
 				this.loading = false
@@ -95,6 +98,8 @@ export default {
 		} else {
 			this.client = this.existingClientData
 		}
+
+		// set timeout for connecting loader to reduce jarring if loads too quickly
 		setTimeout(() => { this.loading = false }, 2000)
 	},
 	methods: {
@@ -108,24 +113,33 @@ export default {
 			this.client.leaveLobby()
 		},
 		copyCodeToClipboard: function() {
+			// copy lobby code to clipboard when clicked
 			this.$refs.lobbyCode.select()
 			document.execCommand("copy")
+
+			// show successfully copied message
 			this.displayCopiedMessage()
+
+			// unselect input content so it is not highlighted
 			this.$refs.lobbyCode.blur()
 		},
 		displayCopiedMessage: function() {
+			// display and then hide success message after 3 seconds
 			this.copied = { display: "inherit", color: "green" }
 			setTimeout(() => { this.copied = { display: "none" } }, 3000)
 		}
 	},
 	computed: {
 		canStartGame: function() {
+			// check that all players in the lobby are ready
 			return this.client.lobby.players.filter(player => player.isReady).length === this.client.lobby.players.length
 		},
 		readyButtonText: function() {
+			// ready display text for button depending on client current ready state
 			return this.client.details.isReady ? "Unready" : "Ready"
 		},
 		isHost: function() {
+			// identify if this player is the host
 			return this.client.details.id === this.client.lobby.host.id
 		}
 	}
