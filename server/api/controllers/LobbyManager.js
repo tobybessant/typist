@@ -28,7 +28,15 @@ module.exports = class LobbyManager {
 		if (data.username) {
 			// initialise new lobby
 			const lobby = new Lobby(socket, data.username)
-			this.lobbies[lobby.code] = lobby
+			
+			// check code is not already taken
+			let lobbyInList = this.lobbies[lobby.code];
+			while(lobbyInList !== undefined) {
+				lobby.generateAndSetCode();
+				lobbyInList = this.lobbies[lobby.code];
+			}
+
+			this.lobbies[lobby.code] = lobby;
 
 			// send player their generated details (id, and other data stores)
 			this.sendPlayerDetails(socket, lobby.code)

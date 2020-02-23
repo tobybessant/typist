@@ -8,7 +8,7 @@
 					<div class="value">
 						<div class="copy-code-container">
 							<div class="lobby-code-container" @click="copyCodeToClipboard">
-								<input id="lobby-code" ref="lobbyCode" type="text" :value="client.lobby.code" readonly>
+								<input id="lobby-code" ref="lobbyCode" type="text" :value="lobby.code" readonly>
 								<font-awesome-icon id="clipboard-icon" :icon="['far', 'clipboard']" />
 							</div>
 							<div class="fade-in" v-bind:style="copied">
@@ -19,7 +19,7 @@
 				</div>
 				<div class="detail">
 					<div class="label">Host</div>
-					<div class="value">{{ client.lobby.host.username }}</div>
+					<div class="value">{{ lobby.host.username }}</div>
 				</div>
 			</div>
 
@@ -41,7 +41,7 @@
 			<div class="player-list">
 
 			</div>
-			<PlayerLobby v-for="player in client.lobby.players"
+			<PlayerLobby v-for="player in lobby.players"
 									v-bind:key="player.id"
 									:player="player"/>
 
@@ -88,7 +88,8 @@ export default {
 		// if no existing client data is present (for players returning from finished game) create new client object
 		if (!this.existingClientData) {
 			// connect to server websocket
-			const socket = await io.connect(":9000")
+			// const socket = await io.connect(`:${process.env.PORT}` || ":9000")
+			const socket = await io()
 			if (this.username) {
 				// create new client with required data / dependencies
 				this.client = new Client(socket, this.$router, this.username, this.lobbyId)
@@ -141,6 +142,9 @@ export default {
 		isHost: function() {
 			// identify if this player is the host
 			return this.client.details.id === this.client.lobby.host.id
+		},
+		lobby: function() {
+			return this.client.lobby
 		}
 	}
 }

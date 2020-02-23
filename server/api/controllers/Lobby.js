@@ -136,6 +136,10 @@ module.exports = class Lobby {
 		return id
 	}
 
+	generateAndSetCode() {
+		this.code = this.generateCode();
+	}
+
 	generateParagraph() {
 		// use randomWords npm package to return an array of 30 random words, with max char length of 5
 		return new Promise((resolve, reject) => {

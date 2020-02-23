@@ -7,7 +7,9 @@
     "dev": "nodemon --inspect index.js",
     "test": "npm run test:unit && npm run test:integration",
     "test:unit": "NODE_ENV=test mocha -ui tdd test/unit/**/*.js --exit",
-    "test:integration": "NODE_ENV=test mocha -ui bdd test/integration/**/*.js --exit"
+    "test:integration": "NODE_ENV=test mocha -ui bdd test/integration/**/*.js --exit",
+    "build": "cd ../client && npm run build && cd ../server && npm run prod",
+    "prod": "node index.js"
   },
   "author": "",
   "license": "ISC",

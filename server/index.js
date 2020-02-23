@@ -1,3 +1,4 @@
+const path = require("path")
 const express = require("express")
 const app = express()
 const http = require("http").createServer(app)
@@ -16,6 +17,8 @@ const database = require("./database")
 
 // environment config
 dotenv.config()
+console.log("Lauching in " + process.env.NODE_ENV)
+console.log("port: " + process.env.PORT)
 
 // search npm args for test db string (azure pipeline env var)
 process.argv.forEach(function (arg) {
@@ -35,6 +38,10 @@ app.use(bodyParser.json())
 app.use(cors())
 if (process.env.NODE_ENV === "development") {
 	app.use(morgan("dev"))
+}
+
+if(process.env.NODE_ENV === "production") {
+	app.use("/", express.static(path.resolve(__dirname, "../client/dist")))
 }
 
 // setup lobby manager
