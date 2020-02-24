@@ -3,10 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "./node_modules/@vue/cli-service/bin/vue-cli-service.js serve --open",
-    "build": "./node_modules/@vue/cli-service/bin/vue-cli-service.js build",
-    "lint": "./node_modules/@vue/cli-service/bin/vue-cli-service.js lint",
-    "test": "./node_modules/@vue/cli-service/bin/vue-cli-service.js test:unit --recursive 'tests/**/*.test.js'"
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint",
+    "test": "vue-cli-service test:unit --recursive 'tests/**/*.test.js'"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.26",
@@ -18,13 +18,13 @@
     "socket.io": "^2.3.0",
     "uws": "^100.0.1",
     "vue": "^2.6.10",
-    "vue-router": "^3.1.3",
+    "vue-router": "^3.1.3"
+  },
+  "devDependencies": {
     "@vue/cli-plugin-babel": "^4.1.0",
     "@vue/cli-plugin-eslint": "^4.1.0",
     "@vue/cli-plugin-unit-mocha": "^4.1.0",
-    "@vue/cli-service": "^4.1.0"
-  },
-  "devDependencies": {
+    "@vue/cli-service": "^4.1.0",
     "@vue/eslint-config-standard": "^4.0.0",
     "@vue/test-utils": "1.0.0-beta.29",
     "babel-eslint": "^10.0.3",
