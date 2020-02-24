@@ -1,8 +1,6 @@
 const mongoose = require("mongoose")
 const options = { useNewUrlParser: true, useUnifiedTopology: true }
 
-const MongoMemoryServer = require("mongodb-memory-server").MongoMemoryServer
-
 const TABLE_NAMES = {
 	HIGHSCORES: "highscores"
 }
@@ -12,8 +10,10 @@ module.exports = {
 	TABLE_NAMES,
 	database: null,
 	async connect (uri) {
+		console.log("DB CONNECTING TO: ", uri)
 		if (uri === undefined) {
 			// if no uri is specified, start a mongo memory server
+			const MongoMemoryServer = require("mongodb-memory-server").MongoMemoryServer
 			const mongoMemoryServer = new MongoMemoryServer()
 			uri = await mongoMemoryServer.getConnectionString()
 		}
