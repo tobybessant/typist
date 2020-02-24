@@ -1,7 +1,7 @@
 export default class HighscoreController {
 	constructor(axios) {
 		// set base properties
-		this.baseUrl = "http://localhost:9000/api/highscore/"
+		this.baseUrl = "/api/highscore/"
 		this.axios = axios
 	}
 	async save(data) {
