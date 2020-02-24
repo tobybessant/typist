@@ -35,8 +35,8 @@ const DB_STRING = process.env["DB_STRING_" + process.env.NODE_ENV]
 // app config
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
-app.use(cors())
 if (process.env.NODE_ENV === "development") {
+	app.use(cors())
 	app.use(morgan("dev"))
 }
 
