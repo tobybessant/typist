@@ -41,7 +41,7 @@ if (process.env.NODE_ENV === "development") {
 }
 
 if(process.env.NODE_ENV === "production") {
-	app.use("/", express.static(path.resolve(__dirname, "../client/dist")))
+	app.use("/", express.static(path.resolve(__dirname, "client/dist")))
 }
 
 // setup lobby manager
