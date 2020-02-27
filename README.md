@@ -1,5 +1,5 @@
 # Typist
-Typing web-game - race against your friends!
+Typing web-game - race against your friends! Play now: https://typist-app.herokuapp.com
 
 # Build / Development Setup
 ## Server .env
