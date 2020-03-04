@@ -1,6 +1,9 @@
 <template>
 	<div class="container">
 		<AppHeading />
+		<h2>
+			Type against your friends.<br><br>Click <strong>New Game</strong> to begin, or join your friends by clicking <strong>Join Game</strong>
+		</h2>
 		<div class="buttons">
 			<Button label="New Game" @buttonClick="newGameClicked"/>
 			<Button label="Join Game" @buttonClick="joinGameClicked" />
@@ -50,5 +53,9 @@ export default {
 	display: flex;
 	align-items: center;
 	justify-content: space-around;
+}
+
+h2 {
+	font-weight: 200;
 }
 </style>
